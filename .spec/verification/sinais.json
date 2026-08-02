@@ -1,0 +1,1400 @@
+{
+  "schema": 1,
+  "sinais": {
+    "SPEC_SEM_US::hermes-runtime::.spec/features/hermes-runtime/spec.md": {
+      "codigo": "SPEC_SEM_US",
+      "feature": "hermes-runtime",
+      "ref": ".spec/features/hermes-runtime/spec.md",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-02T19:51:08.557Z",
+      "ultimaVez": "2026-08-02T19:51:08.558Z",
+      "gitRev": "fc598f5"
+    },
+    "GLOB_SEM_ARQUIVOS::—::P-002": {
+      "codigo": "GLOB_SEM_ARQUIVOS",
+      "feature": "—",
+      "ref": "P-002",
+      "ocorrencias": 7,
+      "primeiraVez": "2026-08-02T19:51:08.558Z",
+      "ultimaVez": "2026-08-02T20:33:57.653Z",
+      "gitRev": "fc598f5"
+    },
+    "STATUS_INVALIDO::hermes-runtime::.spec/features/hermes-runtime/spec.md": {
+      "codigo": "STATUS_INVALIDO",
+      "feature": "hermes-runtime",
+      "ref": ".spec/features/hermes-runtime/spec.md",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-02T19:52:46.811Z",
+      "ultimaVez": "2026-08-02T19:52:46.812Z",
+      "gitRev": "fc598f5"
+    },
+    "AC_SEM_TASK::hermes-runtime::AC-001": {
+      "codigo": "AC_SEM_TASK",
+      "feature": "hermes-runtime",
+      "ref": "AC-001",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-02T19:52:46.812Z",
+      "ultimaVez": "2026-08-02T19:52:46.812Z",
+      "gitRev": "fc598f5"
+    },
+    "AC_SEM_TASK::hermes-runtime::AC-002": {
+      "codigo": "AC_SEM_TASK",
+      "feature": "hermes-runtime",
+      "ref": "AC-002",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-02T19:52:46.812Z",
+      "ultimaVez": "2026-08-02T19:52:46.812Z",
+      "gitRev": "fc598f5"
+    },
+    "AC_SEM_TASK::hermes-runtime::AC-006": {
+      "codigo": "AC_SEM_TASK",
+      "feature": "hermes-runtime",
+      "ref": "AC-006",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-02T19:52:46.812Z",
+      "ultimaVez": "2026-08-02T19:52:46.812Z",
+      "gitRev": "fc598f5"
+    },
+    "AC_SEM_TASK::hermes-runtime::AC-003": {
+      "codigo": "AC_SEM_TASK",
+      "feature": "hermes-runtime",
+      "ref": "AC-003",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-02T19:52:46.812Z",
+      "ultimaVez": "2026-08-02T19:52:46.812Z",
+      "gitRev": "fc598f5"
+    },
+    "AC_SEM_TASK::hermes-runtime::AC-004": {
+      "codigo": "AC_SEM_TASK",
+      "feature": "hermes-runtime",
+      "ref": "AC-004",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-02T19:52:46.812Z",
+      "ultimaVez": "2026-08-02T19:52:46.812Z",
+      "gitRev": "fc598f5"
+    },
+    "AC_SEM_TASK::hermes-runtime::AC-005": {
+      "codigo": "AC_SEM_TASK",
+      "feature": "hermes-runtime",
+      "ref": "AC-005",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-02T19:52:46.812Z",
+      "ultimaVez": "2026-08-02T19:52:46.812Z",
+      "gitRev": "fc598f5"
+    },
+    "AC_SEM_TESTE::hermes-runtime::AC-001": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "hermes-runtime",
+      "ref": "AC-001",
+      "ocorrencias": 3,
+      "primeiraVez": "2026-08-02T19:52:46.812Z",
+      "ultimaVez": "2026-08-02T19:54:23.842Z",
+      "gitRev": "fc598f5"
+    },
+    "AC_SEM_TESTE::hermes-runtime::AC-002": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "hermes-runtime",
+      "ref": "AC-002",
+      "ocorrencias": 3,
+      "primeiraVez": "2026-08-02T19:52:46.812Z",
+      "ultimaVez": "2026-08-02T19:54:23.843Z",
+      "gitRev": "fc598f5"
+    },
+    "AC_SEM_TESTE::hermes-runtime::AC-006": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "hermes-runtime",
+      "ref": "AC-006",
+      "ocorrencias": 3,
+      "primeiraVez": "2026-08-02T19:52:46.812Z",
+      "ultimaVez": "2026-08-02T19:54:23.843Z",
+      "gitRev": "fc598f5"
+    },
+    "AC_SEM_TESTE::hermes-runtime::AC-003": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "hermes-runtime",
+      "ref": "AC-003",
+      "ocorrencias": 3,
+      "primeiraVez": "2026-08-02T19:52:46.812Z",
+      "ultimaVez": "2026-08-02T19:54:23.843Z",
+      "gitRev": "fc598f5"
+    },
+    "AC_SEM_TESTE::hermes-runtime::AC-004": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "hermes-runtime",
+      "ref": "AC-004",
+      "ocorrencias": 3,
+      "primeiraVez": "2026-08-02T19:52:46.812Z",
+      "ultimaVez": "2026-08-02T19:54:23.843Z",
+      "gitRev": "fc598f5"
+    },
+    "AC_SEM_TESTE::hermes-runtime::AC-005": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "hermes-runtime",
+      "ref": "AC-005",
+      "ocorrencias": 3,
+      "primeiraVez": "2026-08-02T19:52:46.812Z",
+      "ultimaVez": "2026-08-02T19:54:23.843Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_INEXISTENTE::hermes-runtime::T-003": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "hermes-runtime",
+      "ref": "T-003",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-02T19:53:32.725Z",
+      "ultimaVez": "2026-08-02T19:53:32.726Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::crates/buzz-acp/src/acp.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "crates/buzz-acp/src/acp.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.726Z",
+      "ultimaVez": "2026-08-02T19:54:23.843Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::crates/buzz-acp/src/base_prompt.md": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "crates/buzz-acp/src/base_prompt.md",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.726Z",
+      "ultimaVez": "2026-08-02T19:54:23.843Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::crates/buzz-acp/src/engram_fetch.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "crates/buzz-acp/src/engram_fetch.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.726Z",
+      "ultimaVez": "2026-08-02T19:54:23.843Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::crates/buzz-acp/src/filter.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "crates/buzz-acp/src/filter.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.843Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::crates/buzz-acp/src/lib.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "crates/buzz-acp/src/lib.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.843Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::crates/buzz-acp/src/main.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "crates/buzz-acp/src/main.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.843Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::crates/buzz-acp/src/observer.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "crates/buzz-acp/src/observer.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.843Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::crates/buzz-acp/src/pool.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "crates/buzz-acp/src/pool.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::crates/buzz-acp/src/pool_lifecycle.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "crates/buzz-acp/src/pool_lifecycle.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::crates/buzz-acp/src/queue.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "crates/buzz-acp/src/queue.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::crates/buzz-acp/src/relay.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "crates/buzz-acp/src/relay.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::crates/buzz-acp/src/setup_mode.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "crates/buzz-acp/src/setup_mode.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::crates/buzz-acp/src/usage.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "crates/buzz-acp/src/usage.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/agent_env.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/agent_env.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/agent_events.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/agent_events.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/agent_snapshot.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/agent_snapshot.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/agent_snapshot_envelope.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/agent_snapshot_envelope.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/agent_snapshot_tests.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/agent_snapshot_tests.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/backend.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/backend.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/config_bridge/buzz_agent.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/config_bridge/buzz_agent.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/config_bridge/claude.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/config_bridge/claude.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/config_bridge/codex.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/config_bridge/codex.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/config_bridge/goose.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/config_bridge/goose.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/config_bridge/reader_tests.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/config_bridge/reader_tests.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/config_bridge/schema_walker.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/config_bridge/schema_walker.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/config_bridge/types.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/config_bridge/types.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/custom_harnesses.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/custom_harnesses.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/discovery/overrides.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/discovery/overrides.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/discovery/runtime_metadata.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/discovery/runtime_metadata.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/discovery/tests/codex_version.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/discovery/tests/codex_version.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/discovery/tests/managed_path_resolution.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/discovery/tests/managed_path_resolution.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/effective_config/mod.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/effective_config/mod.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/effective_config/tests.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/effective_config/tests.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/env_vars.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/env_vars.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/env_vars/tests.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/env_vars/tests.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/git_bash.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/git_bash.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/global_config/mod.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/global_config/mod.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/global_config/tests.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/global_config/tests.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/managed_node_paths.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/managed_node_paths.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/mod.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/mod.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/nest.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/nest.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/nest/tests.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/nest/tests.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/nest_agents.md": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/nest_agents.md",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/nest_skill.md": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/nest_skill.md",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/persona_avatars.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/persona_avatars.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/persona_events.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/persona_events.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/persona_events/tests.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/persona_events/tests.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/personas.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/personas.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/personas/tests.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/personas/tests.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/process_lifecycle.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/process_lifecycle.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/readiness.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/readiness.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/readiness/cli_login.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/readiness/cli_login.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/readiness/cli_probe.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/readiness/cli_probe.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/readiness_goose_file_config_tests.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/readiness_goose_file_config_tests.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/reconcile.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/reconcile.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/reconcile/tests.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/reconcile/tests.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/relay_mesh.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/relay_mesh.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/repos.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/repos.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/restore.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/restore.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/retention.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/retention.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/retention/legacy_migration.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/retention/legacy_migration.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/retention/legacy_migration/tests.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/retention/legacy_migration/tests.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/runtime.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/runtime.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/runtime/instance_reaper.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/runtime/instance_reaper.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/runtime/lifecycle.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/runtime/lifecycle.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/runtime/metadata.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/runtime/metadata.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/runtime/orphan_sweep.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/runtime/orphan_sweep.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/runtime/path.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/runtime/path.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/runtime/process.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/runtime/process.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/runtime/stop.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/runtime/stop.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/runtime/sweep.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/runtime/sweep.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/runtime/tests.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/runtime/tests.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/runtime_commands.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/runtime_commands.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/runtime_types.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/runtime_types.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/screenshot_skill.md": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/screenshot_skill.md",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/snapshot_avatar.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/snapshot_avatar.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/spawn_hash.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/spawn_hash.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/spawn_hash/tests.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/spawn_hash/tests.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/storage.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/storage.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/storage_tests.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/storage_tests.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/team_events.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/team_events.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/team_repair.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/team_repair.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/team_snapshot.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/team_snapshot.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/teams.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/teams.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/teams_tests.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/teams_tests.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/types.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/types.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/types/catalog_source.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/types/catalog_source.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/types/catalog_source/tests.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/types/catalog_source/tests.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/types/requests.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/types/requests.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src-tauri/src/managed_agents/types/tests.rs": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src-tauri/src/managed_agents/types/tests.rs",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src/features/onboarding/assets/harness-logos/claude.png": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src/features/onboarding/assets/harness-logos/claude.png",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src/features/onboarding/communityOnboarding.tsx": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src/features/onboarding/communityOnboarding.tsx",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src/features/onboarding/devFreshOnboarding.ts": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src/features/onboarding/devFreshOnboarding.ts",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src/features/onboarding/hooks.ts": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src/features/onboarding/hooks.ts",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src/features/onboarding/lib/encryptedBackup.ts": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src/features/onboarding/lib/encryptedBackup.ts",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src/features/onboarding/lib/keyImportInput.ts": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src/features/onboarding/lib/keyImportInput.ts",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src/features/onboarding/machineOnboarding.ts": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src/features/onboarding/machineOnboarding.ts",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src/features/onboarding/ui/AvatarStep.tsx": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src/features/onboarding/ui/AvatarStep.tsx",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src/features/onboarding/ui/BackupPasswordTimeline.tsx": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src/features/onboarding/ui/BackupPasswordTimeline.tsx",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src/features/onboarding/ui/BackupStep.tsx": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src/features/onboarding/ui/BackupStep.tsx",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src/features/onboarding/ui/BackupTestFlow.tsx": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src/features/onboarding/ui/BackupTestFlow.tsx",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src/features/onboarding/ui/CommunityOnboardingFlow.tsx": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src/features/onboarding/ui/CommunityOnboardingFlow.tsx",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src/features/onboarding/ui/DefaultConfigStep.tsx": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src/features/onboarding/ui/DefaultConfigStep.tsx",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src/features/onboarding/ui/DownloadKeyStep.tsx": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src/features/onboarding/ui/DownloadKeyStep.tsx",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src/features/onboarding/ui/EncryptedBackupCreator.tsx": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src/features/onboarding/ui/EncryptedBackupCreator.tsx",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src/features/onboarding/ui/HarnessMarks.tsx": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src/features/onboarding/ui/HarnessMarks.tsx",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src/features/onboarding/ui/IdentityKeyHelpDialog.tsx": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src/features/onboarding/ui/IdentityKeyHelpDialog.tsx",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src/features/onboarding/ui/InviteRedeemForm.tsx": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src/features/onboarding/ui/InviteRedeemForm.tsx",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src/features/onboarding/ui/JoinPolicyNotice.tsx": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src/features/onboarding/ui/JoinPolicyNotice.tsx",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src/features/onboarding/ui/KeyringLockedScreen.tsx": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src/features/onboarding/ui/KeyringLockedScreen.tsx",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src/features/onboarding/ui/LandingBees.tsx": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src/features/onboarding/ui/LandingBees.tsx",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src/features/onboarding/ui/MachineOnboardingFlow.tsx": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src/features/onboarding/ui/MachineOnboardingFlow.tsx",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src/features/onboarding/ui/MembershipDenied.tsx": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src/features/onboarding/ui/MembershipDenied.tsx",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src/features/onboarding/ui/NostrKeyImportForm.tsx": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src/features/onboarding/ui/NostrKeyImportForm.tsx",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src/features/onboarding/ui/NsecMaskedDisplay.tsx": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src/features/onboarding/ui/NsecMaskedDisplay.tsx",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src/features/onboarding/ui/OnboardingChrome.tsx": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src/features/onboarding/ui/OnboardingChrome.tsx",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src/features/onboarding/ui/OnboardingFlow.tsx": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src/features/onboarding/ui/OnboardingFlow.tsx",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src/features/onboarding/ui/OnboardingFooter.tsx": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src/features/onboarding/ui/OnboardingFooter.tsx",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src/features/onboarding/ui/OnboardingSlideTransition.tsx": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src/features/onboarding/ui/OnboardingSlideTransition.tsx",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src/features/onboarding/ui/PendingInviteGate.tsx": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src/features/onboarding/ui/PendingInviteGate.tsx",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src/features/onboarding/ui/ProfileStep.tsx": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src/features/onboarding/ui/ProfileStep.tsx",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src/features/onboarding/ui/RecoveryScreen.tsx": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src/features/onboarding/ui/RecoveryScreen.tsx",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src/features/onboarding/ui/RelaunchRequiredScreen.tsx": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src/features/onboarding/ui/RelaunchRequiredScreen.tsx",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src/features/onboarding/ui/ResetFailedScreen.tsx": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src/features/onboarding/ui/ResetFailedScreen.tsx",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src/features/onboarding/ui/RuntimeErrorTooltip.tsx": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src/features/onboarding/ui/RuntimeErrorTooltip.tsx",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src/features/onboarding/ui/SetupStep.tsx": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src/features/onboarding/ui/SetupStep.tsx",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src/features/onboarding/ui/WelcomeKickoffStage.tsx": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src/features/onboarding/ui/WelcomeKickoffStage.tsx",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src/features/onboarding/ui/agentReadiness.ts": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src/features/onboarding/ui/agentReadiness.ts",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src/features/onboarding/ui/onboardingRuntimeSelection.ts": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src/features/onboarding/ui/onboardingRuntimeSelection.ts",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src/features/onboarding/ui/saveCoalescer.ts": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src/features/onboarding/ui/saveCoalescer.ts",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src/features/onboarding/ui/types.ts": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src/features/onboarding/ui/types.ts",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src/features/onboarding/useClaimInvite.ts": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src/features/onboarding/useClaimInvite.ts",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src/features/onboarding/useWelcomeKickoffEntrance.ts": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src/features/onboarding/useWelcomeKickoffEntrance.ts",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src/features/onboarding/useWelcomeKickoffStage.ts": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src/features/onboarding/useWelcomeKickoffStage.ts",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src/features/onboarding/useWelcomeKickoffStagePresence.tsx": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src/features/onboarding/useWelcomeKickoffStagePresence.tsx",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src/features/onboarding/welcome.ts": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src/features/onboarding/welcome.ts",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src/features/onboarding/welcomeCanvas.ts": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src/features/onboarding/welcomeCanvas.ts",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src/features/onboarding/welcomeGuide.ts": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src/features/onboarding/welcomeGuide.ts",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    },
+    "ARQUIVO_ORFAO::—::desktop/src/features/onboarding/welcomeKickoff.ts": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "desktop/src/features/onboarding/welcomeKickoff.ts",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-02T19:53:32.727Z",
+      "ultimaVez": "2026-08-02T19:54:23.844Z",
+      "gitRev": "fc598f5"
+    }
+  }
+}

@@ -43,7 +43,7 @@ fn resolves_known_avatar_for_command_paths_and_aliases() {
 fn returns_none_for_unknown_commands() {
     assert!(managed_agent_avatar_url("custom-agent").is_none());
 }
-
+include!("hermes_tests.rs");
 #[test]
 fn default_agent_command_resolves_bundled_buzz_agent() {
     // The default must be bundled buzz-agent, never bare `goose` on a stock Windows install.

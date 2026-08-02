@@ -172,6 +172,7 @@ const KNOWN_ACP_RUNTIMES: &[KnownAcpRuntime] = &[
         // Verified: `codex login status` exits 0 when logged in, non-zero otherwise.
         auth_probe_args: Some(&["codex", "login", "status"]),
     },
+    include!("discovery/hermes.rs"),
     KnownAcpRuntime {
         id: "buzz-agent",
         label: "Buzz Agent",
@@ -462,10 +463,9 @@ pub fn try_record_agent_command(
     // No runtime id set — legacy agent; use the safe default.
     Ok(default_agent_command())
 }
-
 fn default_agent_args(command: &str) -> Option<Vec<String>> {
     match normalize_command_identity(command).as_str() {
-        "goose" => Some(vec!["acp".to_string()]),
+        "goose" | "hermes" => Some(vec!["acp".to_string()]),
         "codex" | "codex-acp" | "claude-agent-acp" | "claude-code-acp" | "claude-code"
         | "claudecode" | "buzz-agent" => Some(Vec::new()),
         _ => None,

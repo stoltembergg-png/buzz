@@ -1,5 +1,29 @@
 # Changelog
 
+## [0.5.3-hermes.1] - 2026-08-02
+
+### Hermes ACP runtime
+
+- Registered Hermes Agent as a first-class ACP runtime in Buzz Desktop.
+- Added `hermes-acp`, `hermes`, and `hermes-agent` command resolution with ACP argument normalization.
+- Added a non-sensitive Hermes configuration bridge that reads supported provider/model metadata while keeping credentials out of Buzz surfaces.
+- Removed the duplicate Hermes legacy preset and orphaned logo.
+- Added ONP specification contracts and audit evidence for the Hermes runtime slice.
+
+### Validation
+
+- `pnpm run check`: PASS.
+- Desktop test suite: 3905 passed, 0 failed.
+- Hermes-focused Desktop Rust tests: 5 passed, 0 failed.
+- `onp-spec verify hermes-runtime`: 6/6 criteria proved.
+- `onp-spec audit --ci`: exit 0.
+
+### Known limitations
+
+- The full `buzz-acp` suite still has five timing-related failures in steering/keepalive/deadline tests; these are outside the Hermes runtime slice.
+- This first macOS artifact is an unsigned Intel (`x86_64`) preview build; it is not notarized.
+- End-to-end validation with an installed Hermes process, relay, and production secret store remains future work.
+
 ## v0.5.3
 
 ### Desktop and shared changes

@@ -1,0 +1,28 @@
+{
+  "testCommand": "node --test .spec/features/hermes-runtime/contract.test.mjs",
+  "reporter": "tap",
+  "testGlobs": [
+    ".spec/features/hermes-runtime/contract.test.mjs",
+    "desktop/src/**/*.test.mjs",
+    "desktop/src/**/*.spec.mjs",
+    "desktop/src-tauri/src/managed_agents/discovery/hermes_tests.rs"
+  ],
+  "srcGlobs": [
+    "crates/buzz-acp/src/config.rs",
+    "desktop/src-tauri/src/managed_agents/config_bridge/mod.rs",
+    "desktop/src-tauri/src/managed_agents/config_bridge/reader.rs",
+    "desktop/src-tauri/src/managed_agents/config_bridge/hermes.rs",
+    "desktop/src-tauri/src/managed_agents/discovery.rs",
+    "desktop/src-tauri/src/managed_agents/discovery/hermes.rs",
+    "desktop/src-tauri/src/managed_agents/discovery/presets.rs",
+    "desktop/src-tauri/src/managed_agents/discovery/tests.rs",
+    "desktop/src/features/onboarding/ui/RuntimeIcon.tsx"
+  ],
+  "ignoreGlobs": [
+    "node_modules/**",
+    ".git/**",
+    "dist/**",
+    "build/**",
+    "coverage/**"
+  ]
+}

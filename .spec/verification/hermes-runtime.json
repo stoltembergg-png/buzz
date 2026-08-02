@@ -1,0 +1,42 @@
+{
+  "feature": "hermes-runtime",
+  "timestamp": "2026-08-02T20:33:56.563Z",
+  "gitRev": "fc598f5",
+  "command": "node --test .spec/features/hermes-runtime/contract.test.mjs",
+  "reporter": "tap",
+  "exitCode": 0,
+  "testsParsed": 6,
+  "results": {
+    "AC-001": {
+      "status": "pass",
+      "testName": "@spec:AC-001 Hermes runtime identity resolves all entrypoints",
+      "method": "tap"
+    },
+    "AC-002": {
+      "status": "pass",
+      "testName": "@spec:AC-002 Hermes metadata declares the ACP host contract",
+      "method": "tap"
+    },
+    "AC-006": {
+      "status": "pass",
+      "testName": "@spec:AC-006 Hermes has one catalog entry and a working ACP fallback",
+      "method": "tap"
+    },
+    "AC-003": {
+      "status": "pass",
+      "testName": "@spec:AC-003 Hermes config extracts safe provider/model forms",
+      "method": "tap"
+    },
+    "AC-004": {
+      "status": "pass",
+      "testName": "@spec:AC-004 Hermes config honors HERMES_HOME",
+      "method": "tap"
+    },
+    "AC-005": {
+      "status": "pass",
+      "testName": "@spec:AC-005 Hermes config never surfaces credentials",
+      "method": "tap"
+    }
+  },
+  "principles": {}
+}
