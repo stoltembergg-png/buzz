@@ -20,6 +20,12 @@ use crate::usage::{TurnUsage, UsageTracker};
 /// Lines exceeding this limit are rejected to prevent OOM from rogue agents.
 const MAX_LINE_SIZE: usize = 10_000_000; // 10 MB
 
+/// Small post-response window for ACP notifications emitted just after the
+/// JSON-RPC response to a request. Some adapters schedule their final
+/// `agent_message_chunk` asynchronously, so returning immediately on the
+/// matching response can leave that chunk unread on stdout forever.
+const TRAILING_NOTIFICATION_DRAIN: std::time::Duration = std::time::Duration::from_millis(250);
+
 /// An MCP server configuration passed to `session/new`.
 ///
 /// Corresponds to the `McpServerStdio` variant in the ACP schema.
@@ -500,14 +506,25 @@ impl AcpClient {
             }
         }
 
+        // The reasoning effort channel is an internal Hermes compatibility
+        // bridge. Never let it leak from buzz-acp's own environment into an
+        // unrelated ACP runtime, even when the parent process inherited it.
         for (key, value) in extra_env {
             if key == "CODEX_CONFIG" && codex_merge_active {
                 // Handled by build_codex_config_env; skip here to avoid double-setting.
                 continue;
             }
+            if key == "BUZZ_ACP_REASONING_EFFORT"
+                && !crate::config::is_hermes_reasoning_bridge_command(command)
+            {
+                continue;
+            }
             if std::env::var_os(key).is_none() {
                 cmd.env(key, value);
             }
+        }
+        if !crate::config::is_hermes_reasoning_bridge_command(command) {
+            cmd.env_remove("BUZZ_ACP_REASONING_EFFORT");
         }
         if let Some(merged) = codex_config_value {
             cmd.env("CODEX_CONFIG", merged);
@@ -1205,8 +1222,10 @@ impl AcpClient {
             if let Some(id) = msg.get("id") {
                 if *id == serde_json::json!(expected_id) && msg.get("method").is_none() {
                     if let Some(error) = msg.get("error") {
+                        self.drain_trailing_notifications().await;
                         return Err(agent_error_from_json(error));
                     }
+                    self.drain_trailing_notifications().await;
                     return Ok(msg["result"].clone());
                 }
             }
@@ -1238,6 +1257,110 @@ impl AcpClient {
                             self.write_ndjson(&err_resp).await?;
                         }
                         tracing::debug!(target: "acp::wire", "ignoring unknown method: {other}");
+                    }
+                }
+            }
+        }
+    }
+
+    /// Read a short best-effort tail after a JSON-RPC response.
+    ///
+    /// ACP adapters are expected to emit session updates before the matching
+    /// request response, but adapters that schedule the final message update
+    /// can write it immediately after the response instead. The normal read
+    /// loop returns at the response and would otherwise leave that update in
+    /// the child's stdout until another request is sent (or forever at the
+    /// end of a turn). Preserve the response result while draining only this
+    /// bounded tail; a missing tail is normal and adds at most the grace
+    /// interval to request completion.
+    async fn drain_trailing_notifications(&mut self) {
+        let deadline = tokio::time::Instant::now() + TRAILING_NOTIFICATION_DRAIN;
+
+        loop {
+            let remaining = deadline.saturating_duration_since(tokio::time::Instant::now());
+            if remaining.is_zero() {
+                return;
+            }
+
+            let line = match tokio::time::timeout(remaining, self.reader.next()).await {
+                Err(_) | Ok(None) => return,
+                Ok(Some(Err(LinesCodecError::MaxLineLengthExceeded))) => {
+                    tracing::warn!(
+                        target: "acp::wire",
+                        "discarding oversized trailing ACP line"
+                    );
+                    return;
+                }
+                Ok(Some(Err(error))) => {
+                    tracing::warn!(
+                        target: "acp::wire",
+                        "failed reading trailing ACP output: {error}"
+                    );
+                    return;
+                }
+                Ok(Some(Ok(line))) => line,
+            };
+
+            let trimmed = line.trim();
+            if trimmed.is_empty() {
+                continue;
+            }
+
+            let msg: serde_json::Value = match serde_json::from_str(trimmed) {
+                Ok(value) => value,
+                Err(error) => {
+                    self.observe(
+                        "acp_parse_error",
+                        serde_json::json!({
+                            "line": trimmed,
+                            "error": error.to_string(),
+                        }),
+                    );
+                    tracing::warn!(
+                        target: "acp::wire",
+                        "failed to parse trailing ACP line: {error}"
+                    );
+                    continue;
+                }
+            };
+
+            tracing::debug!(target: "acp::wire", "← trailing {trimmed}");
+            self.observe("acp_read", msg.clone());
+
+            if let Some(method) = msg.get("method").and_then(|value| value.as_str()) {
+                match method {
+                    "session/update" => {
+                        self.handle_session_update(&msg);
+                    }
+                    "_goose/unstable/session/update" => {
+                        self.handle_goose_usage_update(&msg);
+                    }
+                    "session/request_permission" => {
+                        if let Err(error) = self.handle_permission_request(&msg).await {
+                            tracing::warn!(
+                                target: "acp::permission",
+                                "failed to answer trailing permission request: {error}"
+                            );
+                        }
+                    }
+                    other => {
+                        if let Some(id) = msg.get("id") {
+                            let err_resp = serde_json::json!({
+                                "jsonrpc": "2.0",
+                                "id": id,
+                                "error": {
+                                    "code": -32601,
+                                    "message": format!("Method not found: {other}")
+                                }
+                            });
+                            if let Err(error) = self.write_ndjson(&err_resp).await {
+                                tracing::warn!(
+                                    target: "acp::wire",
+                                    "failed answering trailing ACP request: {error}"
+                                );
+                                return;
+                            }
+                        }
                     }
                 }
             }
@@ -1639,13 +1762,16 @@ impl AcpClient {
                                         let _ = ack_tx
                                             .send(crate::pool::SteerAck::PromptCompletedNeutral);
                                     }
+                                    self.drain_trailing_notifications().await;
                                     return Err(agent_error_from_json(error));
                                 }
                                 if let Some((_, _, ack_tx)) = pending_steer.take() {
                                     let _ =
                                         ack_tx.send(crate::pool::SteerAck::PromptCompletedNeutral);
                                 }
-                                return Ok(msg["result"].clone());
+                                let result = msg["result"].clone();
+                                self.drain_trailing_notifications().await;
+                                return Ok(result);
                             }
                         }
                     }
@@ -2222,6 +2348,27 @@ fn configure_no_window(cmd: &mut tokio::process::Command) {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use futures_util::StreamExt;
+
+    #[tokio::test]
+    async fn spawn_strips_reasoning_bridge_from_non_hermes_runtime() {
+        let args = vec![
+            "-c".to_string(),
+            "printf '%s\\n' \"${BUZZ_ACP_REASONING_EFFORT-unset}\"".to_string(),
+        ];
+        let extra_env = vec![("BUZZ_ACP_REASONING_EFFORT".to_string(), "high".to_string())];
+        let mut client = AcpClient::spawn("/bin/sh", &args, &extra_env, false)
+            .await
+            .expect("non-Hermes test child should spawn");
+        let line = client
+            .reader
+            .next()
+            .await
+            .expect("test child should emit one line")
+            .expect("test child stdout should be readable");
+        assert_eq!(line, "unset");
+        client.shutdown().await;
+    }
 
     #[test]
     fn stop_reason_parses_all_known_values() {
@@ -3049,6 +3196,42 @@ mod tests {
             )
             .await;
         assert!(matches!(result, Err(AcpError::AgentExited)));
+    }
+
+    #[tokio::test]
+    async fn observes_session_update_that_arrives_after_prompt_response() {
+        let mut client = spawn_script(
+            r#"
+                echo '{"jsonrpc":"2.0","id":42,"result":{"stopReason":"end_turn"}}'
+                sleep 0.05
+                echo '{"jsonrpc":"2.0","method":"session/update","params":{"update":{"sessionUpdate":"agent_message_chunk","content":{"type":"text","text":"late answer"}}}}'
+                sleep 1
+            "#,
+        )
+        .await;
+        let observer = ObserverHandle::in_process();
+        client.set_observer(Some(observer.clone()), 0);
+        let max_dur = std::time::Duration::from_secs(5);
+        let hard_deadline = tokio::time::Instant::now() + max_dur;
+        let result = client
+            .read_until_response_with_idle_timeout(
+                "session-1",
+                42,
+                std::time::Duration::from_secs(1),
+                hard_deadline,
+                max_dur,
+            )
+            .await;
+        assert!(result.is_ok(), "prompt response should succeed: {result:?}");
+
+        tokio::time::sleep(std::time::Duration::from_millis(150)).await;
+        assert!(
+            observer.snapshot().iter().any(|event| {
+                event.payload["method"] == "session/update"
+                    && event.payload["params"]["update"]["sessionUpdate"] == "agent_message_chunk"
+            }),
+            "a trailing ACP agent_message_chunk must not be left unread after the prompt response"
+        );
     }
 
     /// A message with both `id` and `method` is an agent-initiated request,

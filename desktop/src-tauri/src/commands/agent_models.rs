@@ -14,6 +14,10 @@ use super::agent_models_env::{
 };
 use super::agent_update_rollback::{rollback_failed_agent_update, AgentUpdateRollback};
 
+#[path = "agent_models_normalization.rs"]
+mod normalization;
+pub(super) use normalization::normalize_agent_models;
+
 use crate::{
     app_state::AppState,
     managed_agents::{
@@ -98,7 +102,18 @@ pub async fn get_agent_models(
     // Resolve against the baked/process env when the record saved no provider,
     // so a build-provided provider still gets live discovery.
     let effective_provider =
-        effective_discovery_provider(saved_provider.as_deref(), provider_env_var, &merged_env);
+    effective_discovery_provider(saved_provider.as_deref(), provider_env_var, &merged_env);
+    if known_acp_runtime(&agent_command).is_some_and(|meta| meta.id == "hermes") {
+        return run_agent_models_command(
+            resolved_acp,
+            agent_command,
+            agent_args,
+            persisted_model,
+            merged_env,
+        )
+        .await;
+    }
+
     if let Some(models) = discover_openrouter_models(
         &state.http_client,
         &effective_provider,
@@ -181,6 +196,10 @@ pub struct DiscoverAgentModelsInput {
     pub agent_args: Vec<String>,
     #[serde(default)]
     pub provider: Option<String>,
+    /// Selected model from the unsaved form. Passed as a non-sensitive ACP
+    /// bootstrap override so capability discovery describes that model.
+    #[serde(default)]
+    pub model: Option<String>,
     #[serde(default)]
     pub env_vars: BTreeMap<String, String>,
     /// Definition-level env from the harness definition (custom/preset).
@@ -228,7 +247,15 @@ pub async fn discover_agent_models(
         &input.definition_env,
         &input.env_vars,
     );
-    let merged_env = discovery_env_with_baked_floor(merged_env);
+    let mut merged_env = discovery_env_with_baked_floor(merged_env);
+    if let Some(model) = input
+        .model
+        .as_deref()
+        .map(str::trim)
+        .filter(|value| !value.is_empty())
+    {
+        merged_env.insert("BUZZ_ACP_MODEL".to_string(), model.to_string());
+    }
     // Recover a build-provided provider when the form has none, so the create
     // dialog discovers live models instead of falling through to the subprocess.
     let effective_provider = effective_discovery_provider(
@@ -273,6 +300,7 @@ pub async fn discover_agent_models(
             agent_default_model: None,
             selected_model: None,
             supports_switching: true,
+        reasoning_efforts: Vec::new(),
         });
     }
     #[cfg(not(feature = "mesh-llm"))]
@@ -282,36 +310,39 @@ pub async fn discover_agent_models(
         return Err("Buzz shared compute is not available in this build".to_string());
     }
 
-    if let Some(models) =
-        discover_openrouter_models(&state.http_client, &effective_provider, &merged_env, None)
-            .await?
-    {
-        return Ok(models);
-    }
+    let use_acp_capabilities = runtime_meta.is_some_and(|meta| meta.id == "hermes");
+    if !use_acp_capabilities {
+        if let Some(models) =
+            discover_openrouter_models(&state.http_client, &effective_provider, &merged_env, None)
+                .await?
+        {
+            return Ok(models);
+        }
 
-    if let Some(models) = discover_openai_compatible_models(
-        &state.http_client,
-        &effective_provider,
-        &merged_env,
-        None,
-    )
-    .await?
-    {
-        return Ok(models);
-    }
+        if let Some(models) = discover_openai_compatible_models(
+            &state.http_client,
+            &effective_provider,
+            &merged_env,
+            None,
+        )
+        .await?
+        {
+            return Ok(models);
+        }
 
-    if let Some(models) =
-        discover_anthropic_models(&state.http_client, &effective_provider, &merged_env, None)
-            .await?
-    {
-        return Ok(models);
-    }
+        if let Some(models) =
+            discover_anthropic_models(&state.http_client, &effective_provider, &merged_env, None)
+                .await?
+        {
+            return Ok(models);
+        }
 
-    if let Some(models) =
-        discover_databricks_models(&state.http_client, &effective_provider, &merged_env, None)
-            .await?
-    {
-        return Ok(models);
+        if let Some(models) =
+            discover_databricks_models(&state.http_client, &effective_provider, &merged_env, None)
+                .await?
+        {
+            return Ok(models);
+        }
     }
 
     run_agent_models_command(resolved_acp, resolved_agent, agent_args, None, merged_env).await
@@ -532,6 +563,7 @@ async fn discover_openai_compatible_models(
         agent_default_model: None,
         selected_model,
         supports_switching: true,
+        reasoning_efforts: Vec::new(),
     }))
 }
 
@@ -678,6 +710,7 @@ async fn discover_anthropic_models(
         agent_default_model: None,
         selected_model,
         supports_switching: true,
+        reasoning_efforts: Vec::new(),
     }))
 }
 
@@ -770,6 +803,7 @@ async fn discover_databricks_models(
         agent_default_model: None,
         selected_model,
         supports_switching: true,
+        reasoning_efforts: Vec::new(),
     }))
 }
 
@@ -1012,88 +1046,6 @@ pub async fn update_managed_agent(
         agent: summary,
         profile_sync_error: None,
     })
-}
-
-// ── Model normalization ───────────────────────────────────────────────────────
-
-/// Normalize raw `buzz-acp models --json` output into a typed DTO for the frontend.
-///
-/// Merges models from both ACP paths (stable configOptions + unstable SessionModelState),
-/// deduplicates by ID (stable takes precedence), and returns a unified list.
-pub(super) fn normalize_agent_models(
-    raw: &serde_json::Value,
-    persisted_model: Option<String>,
-) -> AgentModelsResponse {
-    let agent_name = raw["agent"]["name"]
-        .as_str()
-        .unwrap_or("unknown")
-        .to_string();
-    let agent_version = raw["agent"]["version"]
-        .as_str()
-        .unwrap_or("unknown")
-        .to_string();
-
-    let mut models: Vec<AgentModelInfo> = Vec::new();
-    let mut seen_ids: HashSet<String> = HashSet::new();
-
-    // 1. Stable configOptions (preferred). Only entries with category "model"
-    //    are model options — the CLI pre-filters, but we're defensive here.
-    if let Some(config_options) = raw["stable"]["configOptions"].as_array() {
-        for opt in config_options {
-            if opt.get("category").and_then(|c| c.as_str()) != Some("model") {
-                continue;
-            }
-            if let Some(options) = opt.get("options").and_then(|v| v.as_array()) {
-                for o in options {
-                    if let Some(value) = o.get("value").and_then(|v| v.as_str()) {
-                        if seen_ids.insert(value.to_string()) {
-                            models.push(AgentModelInfo {
-                                id: value.to_string(),
-                                name: o
-                                    .get("displayName")
-                                    .and_then(|v| v.as_str())
-                                    .map(str::to_string),
-                                description: None,
-                            });
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    // 2. Unstable availableModels (fallback — skip duplicates from stable).
-    let mut agent_default_model: Option<String> = None;
-    if let Some(unstable) = raw.get("unstable") {
-        agent_default_model = unstable["currentModelId"].as_str().map(str::to_string);
-        if let Some(available) = unstable["availableModels"].as_array() {
-            for m in available {
-                if let Some(id) = m.get("modelId").and_then(|v| v.as_str()) {
-                    if seen_ids.insert(id.to_string()) {
-                        models.push(AgentModelInfo {
-                            id: id.to_string(),
-                            name: m.get("name").and_then(|v| v.as_str()).map(str::to_string),
-                            description: m
-                                .get("description")
-                                .and_then(|v| v.as_str())
-                                .map(str::to_string),
-                        });
-                    }
-                }
-            }
-        }
-    }
-
-    let supports_switching = !models.is_empty();
-
-    AgentModelsResponse {
-        agent_name,
-        agent_version,
-        models,
-        agent_default_model,
-        selected_model: persisted_model,
-        supports_switching,
-    }
 }
 
 #[cfg(test)]

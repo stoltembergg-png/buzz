@@ -60,7 +60,12 @@ fn is_subcommand(name: &str) -> bool {
 }
 
 /// Timeout for lightweight helper subcommands (spawn + initialize + model/method probes).
-const MODELS_TIMEOUT: Duration = Duration::from_secs(10);
+///
+/// Hermes loads its plugin registry and configured provider before answering
+/// `session/new`; on a cold macOS process this can exceed ten seconds even
+/// though the adapter is healthy. Keep this bounded, but long enough for the
+/// real managed runtime rather than classifying cold-start latency as absence.
+const MODELS_TIMEOUT: Duration = Duration::from_secs(30);
 
 /// Timeout for `buzz-acp authenticate`. Browser-based vendor auth can require
 /// human interaction, so it must not share the short probe timeout.
@@ -4098,7 +4103,12 @@ async fn run_models(args: ModelsArgs) -> Result<()> {
         .unwrap_or("unknown");
 
     // Extract model info from session/new response.
-    let config_options = extract_model_config_options(&session_resp.raw);
+    let model_config_options = extract_model_config_options(&session_resp.raw);
+    let config_options = session_resp
+        .raw
+        .get("configOptions")
+        .cloned()
+        .unwrap_or_else(|| serde_json::Value::Array(Vec::new()));
     let model_state = extract_model_state(&session_resp.raw);
 
     if args.json {
@@ -4124,9 +4134,9 @@ async fn run_models(args: ModelsArgs) -> Result<()> {
 
         let mut has_models = false;
 
-        if !config_options.is_empty() {
+        if !model_config_options.is_empty() {
             println!("Models (stable configOptions):");
-            for opt in &config_options {
+            for opt in &model_config_options {
                 let config_id = opt.get("configId").and_then(|v| v.as_str()).unwrap_or("?");
                 let display = opt
                     .get("displayName")

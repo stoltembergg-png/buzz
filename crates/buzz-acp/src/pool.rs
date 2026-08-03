@@ -944,11 +944,12 @@ async fn create_session_and_apply_model(
     // Apply desired_model if set, matching against the fresh session/new response.
     // Track whether the switch succeeded so session_config_captured reflects
     // the post-switch state (not the pre-switch desired state).
-    let switch_succeeded = if let Some(ref desired) = agent.desired_model {
+    let (switch_succeeded, model_switch_result) = if let Some(ref desired) = agent.desired_model {
         match resolve_model_switch_method(&resp.raw, desired) {
             Some(method) => {
-                apply_model_switch(&mut agent.acp, &resp.session_id, desired, &method).await?;
-                true
+                let result =
+                    apply_model_switch(&mut agent.acp, &resp.session_id, desired, &method).await?;
+                (true, result)
             }
             None => {
                 tracing::warn!(
@@ -967,12 +968,28 @@ async fn create_session_and_apply_model(
                         "modelId": desired,
                     }),
                 );
-                false
+                (false, None)
             }
         }
     } else {
-        false
+        (false, None)
     };
+
+    let active_session_result =
+        session_result_after_model_switch(&resp.raw, model_switch_result.as_ref());
+
+    // Apply the managed-agent effort through ACP after model resolution. The
+    // value arrives from the non-sensitive BUZZ_ACP_REASONING_EFFORT env var;
+    // the Hermes adapter validates it against the active model and mutates its
+    // live reasoning_config. Agents that do not advertise this option simply
+    // keep their native default.
+    apply_reasoning_effort(
+        &agent.agent_name,
+        &mut agent.acp,
+        &resp.session_id,
+        &active_session_result,
+    )
+    .await?;
 
     // Emit session config for desktop consumption (config bridge tier 1b).
     // Emitted AFTER desired_model resolution so the desktop caches the
@@ -982,7 +999,10 @@ async fn create_session_and_apply_model(
     agent.acp.observe(
         "session_config_captured",
         serde_json::json!({
-            "configOptions": resp.raw.get("configOptions").cloned().unwrap_or(serde_json::Value::Null),
+            "configOptions": active_session_result
+                .get("configOptions")
+                .cloned()
+                .unwrap_or(serde_json::Value::Null),
             "modes": resp.raw.get("modes").cloned().unwrap_or(serde_json::Value::Null),
             "models": resp.raw.get("models").cloned().unwrap_or(serde_json::Value::Null),
             "modelOverridden": agent.model_overridden && switch_succeeded,
@@ -1016,7 +1036,7 @@ async fn apply_model_switch(
     session_id: &str,
     desired: &str,
     method: &ModelSwitchMethod,
-) -> Result<(), AcpError> {
+) -> Result<Option<serde_json::Value>, AcpError> {
     let method_label = match method {
         ModelSwitchMethod::ConfigOption { config_id, .. } => {
             format!("configOption (configId={config_id})")
@@ -1041,11 +1061,12 @@ async fn apply_model_switch(
     .await;
 
     match result {
-        Ok(Ok(_)) => {
+        Ok(Ok(response)) => {
             tracing::info!(
                 target: "pool::model",
                 "applied model {desired} via {method_label} on session {session_id}"
             );
+            return Ok(Some(response));
         }
         // Transport-class errors may have corrupted the stdio stream — propagate
         // so the caller can respawn the agent instead of reusing a poisoned one.
@@ -1066,6 +1087,7 @@ async fn apply_model_switch(
                 target: "pool::model",
                 "failed to set model {desired} via {method_label}: {e} — proceeding with agent default"
             );
+            return Ok(None);
         }
         Err(_) => {
             // Outer timeout fired — the inner send_request may have left the
@@ -1077,7 +1099,120 @@ async fn apply_model_switch(
             return Err(AcpError::Timeout(MODEL_SWITCH_TIMEOUT));
         }
     }
-    Ok(())
+}
+
+fn session_result_after_model_switch(
+    session_new_result: &serde_json::Value,
+    model_switch_result: Option<&serde_json::Value>,
+) -> serde_json::Value {
+    let Some(config_options) = model_switch_result
+        .and_then(|result| result.get("configOptions"))
+        .filter(|value| value.is_array())
+    else {
+        return session_new_result.clone();
+    };
+
+    let Some(object) = session_new_result.as_object() else {
+        return session_new_result.clone();
+    };
+
+    let mut merged = object.clone();
+    merged.insert("configOptions".to_owned(), config_options.clone());
+    serde_json::Value::Object(merged)
+}
+
+fn is_hermes_agent_name(agent_name: &str) -> bool {
+    matches!(
+        agent_name.trim().to_ascii_lowercase().as_str(),
+        "hermes-agent" | "hermes" | "hermes-acp"
+    )
+}
+
+/// Apply the configured model reasoning effort when the agent advertises it.
+///
+/// This is deliberately capability-gated: Buzz never invents a provider/model
+/// vocabulary and never sends a guessed `reasoning_effort` to an ACP runtime.
+async fn apply_reasoning_effort(
+    agent_name: &str,
+    acp: &mut AcpClient,
+    session_id: &str,
+    session_new_result: &serde_json::Value,
+) -> Result<(), AcpError> {
+    if !is_hermes_agent_name(agent_name) {
+        tracing::debug!(
+            target: "pool::reasoning",
+            "reasoning_effort bridge is restricted to Hermes ACP; agent={agent_name}"
+        );
+        return Ok(());
+    }
+    let Ok(desired) = std::env::var("BUZZ_ACP_REASONING_EFFORT") else {
+        return Ok(());
+    };
+    let desired = desired.trim();
+    if desired.is_empty() {
+        return Ok(());
+    }
+
+    let Some(option) = session_new_result
+        .get("configOptions")
+        .and_then(|options| options.as_array())
+        .and_then(|options| {
+            options.iter().find(|option| {
+                option.get("id").and_then(|value| value.as_str()) == Some("reasoning_effort")
+                    || option.get("configId").and_then(|value| value.as_str())
+                        == Some("reasoning_effort")
+            })
+        })
+    else {
+        tracing::debug!(
+            target: "pool::reasoning",
+            "agent did not advertise reasoning_effort; keeping native default"
+        );
+        return Ok(());
+    };
+
+    let supported = option
+        .get("options")
+        .and_then(|values| values.as_array())
+        .map(|values| {
+            values
+                .iter()
+                .any(|value| value.get("value").and_then(|item| item.as_str()) == Some(desired))
+        })
+        .unwrap_or(false);
+    if !supported {
+        tracing::warn!(
+            target: "pool::reasoning",
+            "configured reasoning effort is not advertised by the active model; keeping native default"
+        );
+        return Ok(());
+    }
+
+    let result = tokio::time::timeout(MODEL_SWITCH_TIMEOUT, async {
+        acp.session_set_config_option(session_id, "reasoning_effort", desired)
+            .await
+    })
+    .await;
+
+    match result {
+        Ok(Ok(_)) => {
+            tracing::info!(target: "pool::reasoning", "applied configured reasoning effort via ACP");
+            Ok(())
+        }
+        Ok(Err(e @ AcpError::Io(_)))
+        | Ok(Err(e @ AcpError::WriteTimeout(_)))
+        | Ok(Err(e @ AcpError::Timeout(_)))
+        | Ok(Err(e @ AcpError::Protocol(_)))
+        | Ok(Err(e @ AcpError::AgentExited)) => Err(e),
+        Ok(Err(_)) => {
+            tracing::warn!(
+                target: "pool::reasoning",
+                "agent rejected the configured reasoning effort; keeping native default"
+            );
+            Ok(())
+        }
+        Err(_) => Err(AcpError::Timeout(MODEL_SWITCH_TIMEOUT)),
+    }
 }
 
 /// Set the session permission mode via `session/set_config_option`.
@@ -3974,6 +4109,44 @@ mod tests {
     use super::*;
     use nostr::{EventBuilder, Keys, Kind, Tag, Timestamp};
     use serde_json::json;
+
+    #[test]
+    fn reasoning_bridge_is_restricted_to_hermes_identity() {
+        assert!(is_hermes_agent_name("hermes-agent"));
+        assert!(is_hermes_agent_name(" Hermes "));
+        assert!(is_hermes_agent_name("hermes-acp"));
+        assert!(!is_hermes_agent_name("codex"));
+        assert!(!is_hermes_agent_name("goose"));
+    }
+
+    #[test]
+    fn model_switch_response_refreshes_active_session_config_options() {
+        let initial = json!({
+            "configOptions": [{"id": "reasoning_effort", "currentValue": "low"}],
+            "models": {"currentModelId": "openai:gpt-5.4"},
+        });
+        let switched = json!({
+            "configOptions": [{"id": "reasoning_effort", "currentValue": "high"}],
+        });
+
+        let result = session_result_after_model_switch(&initial, Some(&switched));
+
+        assert_eq!(result["configOptions"][0]["currentValue"], "high");
+        assert_eq!(result["models"]["currentModelId"], "openai:gpt-5.4");
+    }
+
+    #[test]
+    fn model_switch_without_config_options_keeps_session_new_options() {
+        let initial = json!({
+            "configOptions": [{"id": "reasoning_effort", "currentValue": "low"}],
+        });
+
+        assert_eq!(
+            session_result_after_model_switch(&initial, Some(&json!({}))),
+            initial
+        );
+        assert_eq!(session_result_after_model_switch(&initial, None), initial);
+    }
 
     // These pin the initial_message dispatch path (run_prompt_task, ~line 855):
     // a legacy agent WITH a base_prompt must get [Base] prepended to the user

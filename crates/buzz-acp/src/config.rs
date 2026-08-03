@@ -8,6 +8,7 @@ use std::path::PathBuf;
 
 use clap::Parser;
 use clap::ValueEnum;
+use nostr::nips::nip19::ToBech32;
 use nostr::Keys;
 use thiserror::Error;
 use url::Url;
@@ -718,6 +719,49 @@ pub(crate) fn default_agent_env(command: &str) -> &'static [(&'static str, &'sta
     }
 }
 
+pub(crate) fn is_hermes_reasoning_bridge_command(command: &str) -> bool {
+    matches!(
+        normalize_agent_command_identity(command).as_str(),
+        "hermes" | "hermes-agent" | "hermes-acp"
+    )
+}
+
+/// Build the explicit environment bridge Hermes uses for Buzz CLI auth.
+///
+/// Hermes deliberately strips messaging credentials from arbitrary terminal
+/// subprocesses because those names are also registered as platform secrets.
+/// Its local environment sanitizer supports the `_HERMES_FORCE_` prefix for a
+/// trusted host to opt a specific child runtime back in. Keep this bridge
+/// limited to Hermes; other ACP runtimes must not receive Hermes-specific
+/// control variables or a copy of the Buzz identity.
+pub(crate) fn hermes_agent_env(
+    command: &str,
+    relay_url: &str,
+    keys: &Keys,
+    auth_tag: Option<&str>,
+) -> Vec<(String, String)> {
+    if !matches!(
+        normalize_agent_command_identity(command).as_str(),
+        "hermes" | "hermes-agent" | "hermes-acp"
+    ) {
+        return Vec::new();
+    }
+
+    let mut env = vec![
+        ("_HERMES_FORCE_BUZZ_RELAY_URL".into(), relay_url.to_string()),
+        (
+            "_HERMES_FORCE_BUZZ_PRIVATE_KEY".into(),
+            keys.secret_key()
+                .to_bech32()
+                .expect("secret key bech32 encoding should never fail"),
+        ),
+    ];
+    if let Some(auth_tag) = auth_tag.filter(|value| !value.is_empty()) {
+        env.push(("_HERMES_FORCE_BUZZ_AUTH_TAG".into(), auth_tag.to_string()));
+    }
+    env
+}
+
 /// Build the `CODEX_CONFIG` environment variable that enables full outbound
 /// network access in Codex's macOS Seatbelt sandbox.
 ///
@@ -1038,6 +1082,13 @@ impl Config {
         // Spawned desktop agents now carry a complete instance snapshot. Team
         // instructions arrive independently so they can be layered at runtime.
         let mut persona_env_vars = Vec::new();
+        let auth_tag = std::env::var("BUZZ_AUTH_TAG").ok();
+        persona_env_vars.extend(hermes_agent_env(
+            &agent_command,
+            &args.relay_url,
+            &keys,
+            auth_tag.as_deref(),
+        ));
         let model = args.model;
 
         // Inject CODEX_CONFIG so the @agentclientprotocol/codex-acp adapter (1.x)
@@ -1428,6 +1479,18 @@ mod tests {
     use super::*;
     use crate::filter::{ChannelScope, SubscriptionRule};
     use clap::{Parser, ValueEnum};
+    use nostr::nips::nip19::ToBech32;
+
+    #[test]
+    fn reasoning_bridge_is_scoped_to_hermes_commands() {
+        assert!(is_hermes_reasoning_bridge_command("hermes-acp"));
+        assert!(is_hermes_reasoning_bridge_command("/opt/bin/hermes-agent"));
+        assert!(is_hermes_reasoning_bridge_command("Hermes"));
+        assert!(!is_hermes_reasoning_bridge_command("codex-acp"));
+        assert!(!is_hermes_reasoning_bridge_command(
+            "/opt/bin/claude-agent-acp"
+        ));
+    }
 
     /// Build a minimal Config for testing without CLI parsing.
     fn test_config(mode: SubscribeMode) -> Config {
@@ -1663,6 +1726,49 @@ mod tests {
                 "non-Hermes command must have no env defaults: {command}"
             );
         }
+    }
+
+    #[test]
+    fn hermes_forced_env_bridges_buzz_cli_credentials_without_plain_names() {
+        let keys = nostr::Keys::generate();
+        let private_key = keys
+            .secret_key()
+            .to_bech32()
+            .expect("secret key bech32 encoding should never fail");
+        let env = hermes_agent_env(
+            "hermes-acp",
+            "wss://relay.example.invalid",
+            &keys,
+            Some("[REDACTED_AUTH_TAG]"),
+        );
+
+        assert!(env.iter().any(|(name, value)| {
+            name == "_HERMES_FORCE_BUZZ_RELAY_URL" && value == "wss://relay.example.invalid"
+        }));
+        assert!(
+            env.iter().any(|(name, value)| {
+                name == "_HERMES_FORCE_BUZZ_PRIVATE_KEY" && value == &private_key
+            }),
+            "Hermes private key was not forwarded through the force prefix"
+        );
+        assert!(env.iter().any(|(name, value)| {
+            name == "_HERMES_FORCE_BUZZ_AUTH_TAG" && value == "[REDACTED_AUTH_TAG]"
+        }));
+        assert!(!env.iter().any(|(name, _)| name == "BUZZ_PRIVATE_KEY"));
+        assert!(!env.iter().any(|(name, _)| name == "BUZZ_RELAY_URL"));
+        assert!(!env.iter().any(|(name, _)| name == "BUZZ_AUTH_TAG"));
+    }
+
+    #[test]
+    fn hermes_forced_env_is_not_added_to_other_runtimes() {
+        let env = hermes_agent_env(
+            "codex-acp",
+            "wss://relay.example.invalid",
+            &nostr::Keys::generate(),
+            Some("[REDACTED_AUTH_TAG]"),
+        );
+
+        assert!(env.is_empty());
     }
 
     #[test]

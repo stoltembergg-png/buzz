@@ -43,13 +43,15 @@ import {
   AgentModelField,
 } from "@/features/agents/ui/agentConfigControls";
 import { PersonaProviderApiKeyField } from "@/features/agents/ui/PersonaProviderApiKeyField";
-import { usePersonaModelDiscovery } from "@/features/agents/ui/usePersonaModelDiscovery";
 import {
-  BUZZ_AGENT_THINKING_EFFORT,
-  getProviderEffortConfig,
-} from "@/features/agents/ui/buzzAgentConfig";
+  resolveAgentEffortState,
+  withoutEffortEnvVar,
+} from "@/features/agents/ui/agentConfigEffortState";
+import { usePersonaModelDiscovery } from "@/features/agents/ui/usePersonaModelDiscovery";
+import { BUZZ_AGENT_THINKING_EFFORT } from "@/features/agents/ui/buzzAgentConfig";
 import {
   EffortSelectField,
+  getEffortDisplayLabel,
   useEffortAutoClear,
 } from "@/features/agents/ui/buzzAgentModelTuningFields";
 import { SettingsOptionGroup } from "@/features/settings/ui/SettingsOptionGroup";
@@ -68,6 +70,7 @@ const BAKED_STRUCTURED_KEYS = new Set([
   "BUZZ_AGENT_PROVIDER",
   "BUZZ_AGENT_MODEL",
   BUZZ_AGENT_THINKING_EFFORT,
+  "BUZZ_ACP_REASONING_EFFORT",
 ]);
 
 const PROGRESSIVE_FIELDS_TRANSITION = {
@@ -297,11 +300,7 @@ export function AgentConfigFields({
     modelIsOptional ||
     (config.model?.trim().length ?? 0) > 0 ||
     fallbackModel !== null;
-  const bakedEffort = React.useMemo(
-    () =>
-      bakedEnv.find((e) => e.key === BUZZ_AGENT_THINKING_EFFORT)?.value ?? null,
-    [bakedEnv],
-  );
+
   const bakedGenericRows = React.useMemo<readonly InheritedEnvRow[]>(
     () => bakedEnv.filter((e) => !BAKED_STRUCTURED_KEYS.has(e.key)),
     [bakedEnv],
@@ -362,13 +361,38 @@ export function AgentConfigFields({
     modelDiscoveryLoading,
     modelDiscoveryStatus,
     modelDiscoverySuccessfulEmpty,
+    reasoningCapabilityKnown,
+    reasoningEfforts,
   } = usePersonaModelDiscovery({
     envVars: config.env_vars,
     isCustomProviderEditing: isCustomProvider,
     modelFieldVisible: !dependentFieldsDisabled,
+    model: config.model,
     open: true,
     provider: providerForDiscovery,
     selectedRuntime,
+  });
+  const usesNativeAcpEffort =
+    effortField?.targetApplication.kind === "acpConfigOption";
+  const {
+    bakedEffort,
+    currentEffortForAutoClear,
+    effortDefault,
+    effortFieldVisible,
+    effortValid,
+    effortValidForAutoClear,
+    nativeEffortDiscoveryReady,
+  } = resolveAgentEffortState({
+    bakedEnv,
+    config,
+    effortFieldPresent: effortField !== undefined,
+    effortPersistenceKey,
+    providerFieldVisible,
+    reasoningCapabilityKnown,
+    reasoningEfforts,
+    selectedRuntimeId,
+    showEffortField,
+    usesNativeAcpEffort,
   });
   const modelControlVisible = shouldRenderModelControl({
     discoveredModelOptions: dependentFieldsDisabled
@@ -433,10 +457,6 @@ export function AgentConfigFields({
     providerForDiscovery,
     selectedRuntimeId,
   ]);
-
-  const currentEffortForAutoClear = effortPersistenceKey
-    ? (config.env_vars[effortPersistenceKey] ?? "")
-    : "";
 
   // When the selected harness changes outside this component (Back → setup
   // page → choose a different harness → Next), the saved model can belong to
@@ -508,13 +528,10 @@ export function AgentConfigFields({
     onCustomModelEditingChange,
     effortPersistenceKey,
   ]);
-  const { validValues: effortValidForAutoClear } = getProviderEffortConfig(
-    config.provider ?? "",
-    config.model ?? "",
-  );
   useEffortAutoClear({
     currentEffort: currentEffortForAutoClear,
     effortValid: effortValidForAutoClear,
+    enabled: nativeEffortDiscoveryReady,
     onClear: () => {
       const nextEnvVars = { ...config.env_vars };
       if (effortPersistenceKey) delete nextEnvVars[effortPersistenceKey];
@@ -623,22 +640,6 @@ export function AgentConfigFields({
     }
     return "Select a provider";
   }, [bakedProvider, providerOptions]);
-
-  const implicitEffortProvider =
-    selectedRuntimeId === "claude"
-      ? "anthropic"
-      : selectedRuntimeId === "codex"
-        ? "openai"
-        : "";
-  const effortProvider = providerFieldVisible
-    ? (config.provider ?? "")
-    : implicitEffortProvider;
-  const { validValues: effortValid, defaultValue: effortDefault } =
-    getProviderEffortConfig(effortProvider, config.model ?? "");
-  const currentEffort = effortPersistenceKey
-    ? (config.env_vars[effortPersistenceKey] ?? "")
-    : "";
-  const effortFieldVisible = showEffortField && effortField !== undefined;
 
   const progressiveDefaults = disclosure === "progressive-defaults";
   const fieldClassName = unstyled
@@ -825,7 +826,9 @@ export function AgentConfigFields({
       {effortFieldVisible ? (
         <div className={blockClassName}>
           <EffortSelectField
-            currentEffort={dependentFieldsDisabled ? "" : currentEffort}
+            currentEffort={
+              dependentFieldsDisabled ? "" : currentEffortForAutoClear
+            }
             disabled={dependentFieldsDisabled}
             emptyOptionLabel={
               // Semantic, not copy: onboarding-essential hides inheritance
@@ -838,14 +841,17 @@ export function AgentConfigFields({
                 : undefined
             }
             effortDefault={effortDefault}
+            effortOptions={usesNativeAcpEffort ? reasoningEfforts : undefined}
             effortValid={effortValid}
             fieldClassName={unstyled ? fieldClassName : undefined}
             htmlFor="global-agent-thinking-effort"
             inheritFallbackLabel={
-              effortDefault !== null ? `Default (${effortDefault})` : undefined
+              effortDefault !== null
+                ? `Padrão (${getEffortDisplayLabel(effortDefault)})`
+                : undefined
             }
             inheritedEffort={bakedEffort ?? undefined}
-            label="Effort"
+            label={usesNativeAcpEffort ? "Nível de pensamento" : "Effort"}
             labelClassName={fieldLabelClassName}
             onChange={(value) => {
               const nextEnvVars = { ...config.env_vars };
@@ -915,10 +921,9 @@ export function AgentConfigFields({
                     label="Environment variables"
                     onChange={handleEnvVarsChange}
                     requiredKeys={advancedRequiredEnvKeys}
-                    value={Object.fromEntries(
-                      Object.entries(config.env_vars).filter(
-                        ([k]) => k !== BUZZ_AGENT_THINKING_EFFORT,
-                      ),
+                    value={withoutEffortEnvVar(
+                      config.env_vars,
+                      effortPersistenceKey,
                     )}
                   />
                 </motion.div>
@@ -933,11 +938,7 @@ export function AgentConfigFields({
               label="Environment variables"
               onChange={handleEnvVarsChange}
               requiredKeys={advancedRequiredEnvKeys}
-              value={Object.fromEntries(
-                Object.entries(config.env_vars).filter(
-                  ([k]) => k !== BUZZ_AGENT_THINKING_EFFORT,
-                ),
-              )}
+              value={withoutEffortEnvVar(config.env_vars, effortPersistenceKey)}
             />
           ) : null}
         </div>

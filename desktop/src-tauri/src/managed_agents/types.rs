@@ -645,6 +645,7 @@ pub struct AcpRuntimeCatalogEntry {
     pub provider_env_var: Option<String>,
     /// Environment variable used to apply thinking effort, when supported.
     pub thinking_env_var: Option<String>,
+    pub supports_acp_native_config: bool,
     pub install_hint: String,
     pub install_instructions_url: String,
     /// true when at least one automated install step is available
@@ -733,7 +734,6 @@ pub struct UpdateManagedAgentResponse {
     pub agent: ManagedAgentSummary,
     pub profile_sync_error: Option<String>,
 }
-
 /// Response from `get_agent_models` — normalized model info for the frontend.
 #[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -748,8 +748,8 @@ pub struct AgentModelsResponse {
     pub selected_model: Option<String>,
     /// Whether this agent supports model switching.
     pub supports_switching: bool,
+    pub reasoning_efforts: Vec<String>,
 }
-
 /// A single model available from an agent.
 #[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
