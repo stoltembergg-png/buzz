@@ -228,6 +228,51 @@ export function markCommunityOnboardingComplete(
   storage.setItem(`buzz-onboarding-complete.v1:${pubkey}`, "true");
 }
 
+export type CommunityOnboardingStarterInitializer<TQueryClient> = (
+  queryClient: TQueryClient,
+  options: {
+    focus: boolean;
+    pubkey: string;
+    communityScope: string;
+  },
+) => Promise<unknown>;
+
+/**
+ * The fallback button is deliberately non-blocking, but it must not bypass
+ * channel reconciliation. A guest may have reached this path after metadata
+ * propagation failures; close the gate immediately, then run the same
+ * idempotent public-channel setup in the background while the app mounts.
+ */
+export async function completeCommunityOnboardingAfterSkip<TQueryClient>({
+  queryClient,
+  pubkey,
+  relayUrl,
+  initializeStarterChannels,
+  markComplete = markCommunityOnboardingComplete,
+  clear,
+}: {
+  queryClient: TQueryClient;
+  pubkey: string;
+  relayUrl: string;
+  initializeStarterChannels: CommunityOnboardingStarterInitializer<TQueryClient>;
+  markComplete?: (pubkey: string, relayUrl: string) => void;
+  clear: () => void;
+}): Promise<void> {
+  markComplete(pubkey, relayUrl);
+  clear();
+
+  return initializeStarterChannels(queryClient, {
+    focus: false,
+    pubkey,
+    communityScope: relayUrl,
+  }).then(
+    () => undefined,
+    (error) => {
+      console.warn("Failed to reconcile starter channels after skip.", error);
+    },
+  );
+}
+
 /**
  * Returns true when a relay-profile check result means the user should skip
  * community onboarding entirely and land directly in the app.

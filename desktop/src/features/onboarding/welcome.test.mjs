@@ -7,8 +7,10 @@ import {
   ensureWelcomeChannel,
   findPrivateWelcomeChannel,
   hasEnsuredWelcomeChannel,
+  hasEnsuredStarterChannels,
   isWelcomeExperienceChannel,
   markWelcomeChannelEnsured,
+  markStarterChannelsEnsured,
   rememberPendingWelcomeChannel,
   WELCOME_CHANNEL_DESCRIPTION,
   WELCOME_CHANNEL_NAME,
@@ -278,6 +280,31 @@ test("Welcome ensured marker is scoped to the current identity and community", (
   }
 });
 
+test("Starter channel marker is scoped to the current identity and community", () => {
+  const { restore } = installWindowSessionStorage();
+  try {
+    markStarterChannelsEnsured("pubkey-a", "wss://community-a.example");
+
+    assert.equal(
+      hasEnsuredStarterChannels("pubkey-a", "wss://community-a.example"),
+      true,
+    );
+    assert.equal(
+      hasEnsuredStarterChannels("pubkey-a", "wss://community-b.example"),
+      false,
+    );
+    assert.equal(
+      hasEnsuredStarterChannels("pubkey-b", "wss://community-a.example"),
+      false,
+    );
+    assert.equal(
+      hasEnsuredStarterChannels(null, "wss://community-a.example"),
+      false,
+    );
+  } finally {
+    restore();
+  }
+});
 test("ensureStarterChannels reuses existing open starter channels", async () => {
   const general = makeChannel({
     id: "general-channel",

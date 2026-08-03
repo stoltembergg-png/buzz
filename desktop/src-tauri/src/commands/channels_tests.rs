@@ -267,6 +267,34 @@ fn duplicate_channel_rejection_is_ensure_success_only() {
 }
 
 #[test]
+fn optimistic_starter_metadata_keeps_deterministic_channel_visible() {
+    let spec = &STARTER_CHANNELS[0];
+    let channel = optimistic_starter_channel(spec, "chan-1".to_string(), false);
+    assert_eq!(channel.id, "chan-1");
+    assert_eq!(channel.name, "general");
+    assert_eq!(channel.visibility, "open");
+    assert!(!channel.is_member);
+    assert!(is_matching_starter_channel(&channel, spec));
+}
+
+#[test]
+fn starter_metadata_upsert_replaces_optimistic_record_without_losing_membership() {
+    let spec = &STARTER_CHANNELS[0];
+    let mut channels = vec![optimistic_starter_channel(
+        spec,
+        "chan-1".to_string(),
+        true,
+    )];
+    let mut relay_channel = optimistic_starter_channel(spec, "chan-1".to_string(), false);
+    relay_channel.description = "from relay".to_string();
+
+    upsert_starter_channel(&mut channels, relay_channel);
+
+    assert_eq!(channels.len(), 1);
+    assert_eq!(channels[0].description, "from relay");
+    assert!(channels[0].is_member);
+}
+#[test]
 fn starter_match_requires_open_unarchived_stream_by_normalized_name() {
     let spec = &STARTER_CHANNELS[0];
     let mut channel = ChannelInfo {

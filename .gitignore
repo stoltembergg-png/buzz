@@ -1,3 +1,6 @@
+# Generated Tauri updater release config (contains build-time public key)
+desktop/src-tauri/tauri.release.conf.json
+
 # Build artifacts
 /target/
 /dist/

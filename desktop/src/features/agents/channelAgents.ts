@@ -5,6 +5,11 @@ import {
   pickPreferredManagedAgent,
 } from "@/features/agents/agentReuse";
 export { findReusableAgent } from "@/features/agents/agentReuse";
+import {
+  getChannelAgentLabels,
+  isDuplicateChannelAgentMember,
+  normalizeChannelAgentLabel,
+} from "@/features/channels/lib/channelAgentIdentity";
 import { normalizePubkey } from "@/shared/lib/pubkey";
 import { resolveManagedAgentAvatarUrl } from "@/features/agents/ui/managedAgentAvatar";
 import {
@@ -17,6 +22,7 @@ import {
 import { startManagedAgent } from "@/shared/api/tauriManagedAgents";
 import type {
   AcpRuntime,
+  ChannelMember,
   ChannelRole,
   ManagedAgent,
   ManagedAgentBackend,
@@ -32,6 +38,8 @@ export type AttachManagedAgentToChannelInput = {
   agent: ManagedAgent;
   role?: Exclude<ChannelRole, "owner">;
   ensureRunning?: boolean;
+  /** Snapshot already read by the caller; avoids a duplicate relay read. */
+  existingMembers?: readonly ChannelMember[];
 };
 
 export type AttachManagedAgentToChannelResult = {
@@ -111,6 +119,13 @@ export async function attachManagedAgentToChannel(
   const role = input.role ?? "bot";
   const ensureRunning = input.ensureRunning ?? true;
   const agentPubkey = normalizePubkey(input.agent.pubkey);
+  const existingMembers =
+    input.existingMembers ?? (await getChannelMembers(channelId));
+  if (isDuplicateChannelAgentMember(input.agent, existingMembers)) {
+    throw new Error(
+      `An agent named "${input.agent.name}" is already in this channel.`,
+    );
+  }
   const membershipResult = await addChannelMembers({
     channelId,
     pubkeys: [input.agent.pubkey],
@@ -221,6 +236,7 @@ export async function ensureChannelAgentPresetInChannel(
       agent: existingAgent,
       role,
       ensureRunning,
+      existingMembers: members,
     });
     return {
       ...attached,
@@ -243,8 +259,8 @@ export async function ensureChannelAgentPresetInChannel(
     agent: created.agent,
     role,
     ensureRunning,
+    existingMembers: members,
   });
-
   return {
     ...attached,
     created: true,
@@ -257,12 +273,20 @@ export async function provisionChannelManagedAgent(
   context?: {
     managedAgents?: ManagedAgent[];
     channelMemberPubkeys?: ReadonlySet<string>;
+    channelAgentLabels?: ReadonlySet<string>;
   },
 ): Promise<ProvisionChannelManagedAgentResult> {
   const trimmedName = input.name.trim();
 
   if (trimmedName.length === 0) {
     throw new Error("Agent name is required.");
+  }
+
+  const normalizedName = normalizeChannelAgentLabel(trimmedName);
+  if (normalizedName && context?.channelAgentLabels?.has(normalizedName)) {
+    throw new Error(
+      `An agent named "${trimmedName}" is already in this channel.`,
+    );
   }
 
   // Smart reuse: if a managed agent with the same personaId already exists
@@ -390,6 +414,7 @@ export async function createChannelManagedAgent(
   context?: {
     managedAgents?: ManagedAgent[];
     channelMemberPubkeys?: ReadonlySet<string>;
+    channelAgentLabels?: ReadonlySet<string>;
   },
 ): Promise<CreateChannelManagedAgentResult> {
   const provisioned = await provisionChannelManagedAgent(input, context);
@@ -418,7 +443,12 @@ export async function createChannelManagedAgents(
   const channelMemberPubkeys = new Set(
     members.map((m) => normalizePubkey(m.pubkey)),
   );
-  const context = { managedAgents, channelMemberPubkeys };
+  const channelAgentLabels = new Set(getChannelAgentLabels(members));
+  const context = {
+    managedAgents,
+    channelMemberPubkeys,
+    channelAgentLabels,
+  };
 
   // Sequential loop: each agent must be fully created and its relay membership
   // written before the next starts. Concurrent writes to the replaceable
@@ -431,6 +461,8 @@ export async function createChannelManagedAgents(
     try {
       const result = await createChannelManagedAgent(channelId, input, context);
       successes.push(result);
+      const label = normalizeChannelAgentLabel(result.agent.name);
+      if (label) channelAgentLabels.add(label);
     } catch (error) {
       failures.push({
         kind: input.personaId ? "persona" : "generic",

@@ -10,7 +10,8 @@ import { channelsQueryKey } from "@/features/channels/hooks";
 import {
   ensureStarterChannels,
   ensureWelcomeChannel,
-  hasEnsuredWelcomeChannel,
+  hasEnsuredStarterChannels,
+  markStarterChannelsEnsured,
   markWelcomeChannelEnsured,
   notifyWelcomeChannelReady,
   rememberPendingWelcomeChannel,
@@ -145,6 +146,9 @@ export async function initializeStarterChannels(
       notifyWelcomeChannelReady(welcomeChannel.id);
     }
     const focusChannelId = focus ? welcomeChannel.id : undefined;
+    if (!starterChannelsError) {
+      markStarterChannelsEnsured(pubkey, communityScope);
+    }
     if (starterChannelsError) {
       return {
         ok: false,
@@ -581,7 +585,7 @@ export function useAppOnboardingState(isSharedIdentity: boolean) {
       !currentPubkey ||
       !starterChannelsCommunityScope ||
       !readOnboardingCompletion(currentPubkey) ||
-      hasEnsuredWelcomeChannel(currentPubkey, starterChannelsCommunityScope)
+      hasEnsuredStarterChannels(currentPubkey, starterChannelsCommunityScope)
     ) {
       return;
     }

@@ -493,6 +493,42 @@ fn has_all_starter_channels(channels: &[ChannelInfo]) -> bool {
     })
 }
 
+fn optimistic_starter_channel(
+    spec: &StarterChannelSpec,
+    id: String,
+    is_member: bool,
+) -> ChannelInfo {
+    ChannelInfo {
+        id,
+        name: spec.name.to_string(),
+        channel_type: "stream".to_string(),
+        visibility: "open".to_string(),
+        description: spec.description.to_string(),
+        topic: None,
+        purpose: None,
+        member_count: 0,
+        member_pubkeys: Vec::new(),
+        last_message_at: None,
+        archived_at: None,
+        participants: Vec::new(),
+        participant_pubkeys: Vec::new(),
+        is_member,
+        ttl_seconds: None,
+        ttl_deadline: None,
+    }
+}
+
+fn upsert_starter_channel(channels: &mut Vec<ChannelInfo>, mut channel: ChannelInfo) {
+    if let Some(existing) = channels.iter_mut().find(|item| item.id == channel.id) {
+        // Preserve the local pending-owner/join overlay while the relay's
+        // eventual metadata catches up.
+        channel.is_member |= existing.is_member;
+        *existing = channel;
+    } else {
+        channels.push(channel);
+    }
+}
+
 async fn ensure_starter_channel_memberships(
     state: &AppState,
     keys: &nostr::Keys,
@@ -649,6 +685,22 @@ pub async fn ensure_starter_channels(
             }
             Err(error) => return Err(error),
         }
+
+        // The relay may acknowledge the create/join event before its
+        // replaceable kind:39000 metadata is queryable. Keep the deterministic
+        // channel identity visible locally instead of stranding onboarding on
+        // "metadata not yet available". A later query replaces this optimistic
+        // record via `upsert_starter_channel`.
+        if !existing_channels
+            .iter()
+            .any(|channel| channel.id == channel_uuid_string)
+        {
+            existing_channels.push(optimistic_starter_channel(
+                spec,
+                channel_uuid_string,
+                created_ids.contains(&channel_uuid.to_string()),
+            ));
+        }
     }
 
     for _ in 0..3 {
@@ -657,12 +709,7 @@ pub async fn ensure_starter_channels(
             if created_ids.contains(&channel.id) {
                 channel.is_member = true;
             }
-            if !existing_channels
-                .iter()
-                .any(|existing| existing.id == channel.id)
-            {
-                existing_channels.push(channel);
-            }
+            upsert_starter_channel(&mut existing_channels, channel);
         }
         if has_all_starter_channels(&existing_channels) {
             break;

@@ -1052,11 +1052,11 @@ pub async fn discover_managed_agent_prereqs(
 
 #[tauri::command]
 pub async fn list_relay_agents(state: State<'_, AppState>) -> Result<Vec<RelayAgentInfo>, String> {
-    // Query kind:10100 agent profile events from the relay.
+    // Include legacy policy profiles and managed-agent profiles for remote mentions.
     let events = query_relay(
         &state,
         &[serde_json::json!({
-            "kinds": [10100],
+            "kinds": [10100, 30177],
         })],
     )
     .await?;

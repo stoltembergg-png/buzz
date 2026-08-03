@@ -10,9 +10,13 @@ export function getSharedChannelIds(channels: readonly Channel[] | undefined) {
 }
 
 export function relayAgentIsSharedWithUser(
-  agent: Pick<RelayAgent, "channelIds" | "respondTo" | "respondToAllowlist">,
+  agent: Pick<
+    RelayAgent,
+    "pubkey" | "channelIds" | "respondTo" | "respondToAllowlist"
+  >,
   sharedChannelIds: ReadonlySet<string>,
   currentPubkey?: string | null,
+  channelAgentPubkeys: ReadonlySet<string> = new Set(),
 ) {
   const normalizedCurrentPubkey = currentPubkey
     ? normalizePubkey(currentPubkey)
@@ -24,9 +28,15 @@ export function relayAgentIsSharedWithUser(
       .includes(normalizedCurrentPubkey);
   }
 
+  const normalizedAgentPubkey = agent.pubkey
+    ? normalizePubkey(agent.pubkey)
+    : null;
+
   return (
     agent.respondTo === "anyone" &&
-    agent.channelIds.some((channelId) => sharedChannelIds.has(channelId))
+    (agent.channelIds.some((channelId) => sharedChannelIds.has(channelId)) ||
+      (normalizedAgentPubkey !== null &&
+        channelAgentPubkeys.has(normalizedAgentPubkey)))
   );
 }
 
@@ -35,18 +45,28 @@ export function getMentionableAgentPubkeys({
   managedAgentPubkeys,
   relayAgents,
   sharedChannelIds,
+  channelAgentPubkeys,
 }: {
   currentPubkey?: string | null;
   managedAgentPubkeys: Iterable<string>;
   relayAgents: readonly RelayAgent[] | undefined;
   sharedChannelIds: ReadonlySet<string>;
+  /** Agent members of the currently open channel, when the surface has one. */
+  channelAgentPubkeys?: ReadonlySet<string>;
 }) {
   const pubkeys = new Set(
     [...managedAgentPubkeys].map((pubkey) => normalizePubkey(pubkey)),
   );
 
   for (const agent of relayAgents ?? []) {
-    if (relayAgentIsSharedWithUser(agent, sharedChannelIds, currentPubkey)) {
+    if (
+      relayAgentIsSharedWithUser(
+        agent,
+        sharedChannelIds,
+        currentPubkey,
+        channelAgentPubkeys,
+      )
+    ) {
       pubkeys.add(normalizePubkey(agent.pubkey));
     }
   }
@@ -55,12 +75,16 @@ export function getMentionableAgentPubkeys({
 }
 
 export function isAgentIdentityInManagedList(
-  candidate: { isAgent?: boolean; pubkey: string },
+  candidate: { isAgent?: boolean; isMember?: boolean; pubkey: string },
   managedAgentPubkeys: ReadonlySet<string>,
+  allowedAgentPubkeys: ReadonlySet<string> = new Set(),
 ) {
+  const normalized = normalizePubkey(candidate.pubkey);
   return (
     candidate.isAgent !== true ||
-    managedAgentPubkeys.has(normalizePubkey(candidate.pubkey))
+    candidate.isMember === true ||
+    managedAgentPubkeys.has(normalized) ||
+    allowedAgentPubkeys.has(normalized)
   );
 }
 
@@ -107,8 +131,8 @@ type AgentAutocompleteCandidate = {
   personaId?: string | null;
 };
 
-function normalizeLabel(label: string | null | undefined) {
-  return label?.trim().toLowerCase() || null;
+export function normalizeAgentLabel(label: string | null | undefined) {
+  return label?.normalize("NFKC").trim().toLowerCase() || null;
 }
 
 function agentIdentityKey<T extends AgentAutocompleteCandidate>(
@@ -124,7 +148,11 @@ function agentIdentityKey<T extends AgentAutocompleteCandidate>(
     return `persona:${candidate.personaId}`;
   }
 
-  const label = normalizeLabel(getLabel(candidate));
+  if (candidate.pubkey) {
+    return `pubkey:${normalizePubkey(candidate.pubkey)}`;
+  }
+
+  const label = normalizeAgentLabel(getLabel(candidate));
   if (!label) {
     return null;
   }

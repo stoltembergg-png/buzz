@@ -25,6 +25,7 @@ const WELCOME_INITIAL_UNREAD_SUPPRESSION_STORAGE_KEY =
   "buzz:onboarding-welcome-initial-unread-suppression.v1";
 const PENDING_WELCOME_CHANNEL_MAX_AGE_MS = 5 * 60 * 1000;
 const WELCOME_CHANNEL_ENSURED_STORAGE_KEY = "buzz-welcome-channel-ensured.v2";
+const STARTER_CHANNELS_ENSURED_STORAGE_KEY = "buzz-starter-channels-ensured.v1";
 
 type WelcomeChannelClient = {
   createChannel: (input: CreateChannelInput) => Promise<Channel>;
@@ -324,6 +325,52 @@ export function markWelcomeChannelEnsured(
     );
   } catch {
     // Best-effort. The channel itself is the important durable state.
+  }
+}
+
+export function starterChannelsEnsuredStorageKey(
+  pubkey: string,
+  communityScope: string,
+) {
+  return `${STARTER_CHANNELS_ENSURED_STORAGE_KEY}:${encodeURIComponent(
+    communityScope,
+  )}:${pubkey}`;
+}
+
+export function hasEnsuredStarterChannels(
+  pubkey: string | null | undefined,
+  communityScope: string | null | undefined,
+) {
+  if (typeof window === "undefined" || !pubkey || !communityScope) {
+    return false;
+  }
+
+  try {
+    return (
+      window.localStorage.getItem(
+        starterChannelsEnsuredStorageKey(pubkey, communityScope),
+      ) === "true"
+    );
+  } catch {
+    return false;
+  }
+}
+
+export function markStarterChannelsEnsured(
+  pubkey: string | null | undefined,
+  communityScope: string | null | undefined,
+) {
+  if (typeof window === "undefined" || !pubkey || !communityScope) {
+    return;
+  }
+
+  try {
+    window.localStorage.setItem(
+      starterChannelsEnsuredStorageKey(pubkey, communityScope),
+      "true",
+    );
+  } catch {
+    // Best-effort. Relay membership remains the durable source of truth.
   }
 }
 

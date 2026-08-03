@@ -1,5 +1,27 @@
 # Changelog
 
+## v0.5.5 - 2026-08-03
+
+### Desktop
+
+- Fix guest onboarding after `Skip for now` by reconciling the public starter channels in the background and ensuring individual channel membership.
+- Discover owner-created managed agents published as `kind:30177`, preserving the agent identity from the `d`-tag.
+- Preserve distinct managed-agent identities when labels are equal, and make shared `Anyone` agents available to guest autocomplete and mentions.
+- Point the desktop updater fallback at the `Stoltemberg/buzz` fork and add the rolling updater release configuration.
+
+### Validation
+
+- JavaScript suite: 3,921 passed, 0 failed.
+- Focused onboarding, identity, autocomplete, and mention regressions: 29 passed, 0 failed.
+- `pnpm typecheck`, `pnpm check`, Biome, file-size checks, and `cargo fmt --all -- --check`: passed.
+- macOS Intel (`x86_64`) Tauri bundle, updater archive, manifest, checksums, and independent Minisign verification: passed.
+
+### Known limitations
+
+- This is an unsigned, unnotarized macOS Intel preview; Apple Silicon requires Rosetta and arm64 is not included.
+- The full Rust suite retains a pre-existing Hermes discovery failure.
+- No real relay events or provider prompts were used in validation, and an installed-app updater installation/relaunch E2E remains unverified.
+
 ## v0.5.4
 
 ### Desktop and shared changes

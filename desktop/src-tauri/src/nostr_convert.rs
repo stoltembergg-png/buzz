@@ -9,6 +9,7 @@
 
 use std::collections::{BTreeSet, HashMap};
 
+use buzz_core_pkg::kind::KIND_MANAGED_AGENT;
 use nostr::{Event, ToBech32};
 use serde_json::{json, Value};
 
@@ -22,9 +23,7 @@ pub use user_search::{
 
 // ── Tag helpers ─────────────────────────────────────────────────────────────
 
-/// Find the first tag whose name matches `name` and return its first value.
-///
-/// e.g. for tag `["name", "general"]` with `name="name"` returns `Some("general")`.
+/// Return the first value of the named tag.
 fn first_tag_value<'a>(event: &'a Event, name: &str) -> Option<&'a str> {
     for tag in event.tags.iter() {
         let s = tag.as_slice();
@@ -447,11 +446,12 @@ pub fn agents_from_events(events: &[Event]) -> Value {
         .iter()
         .map(|ev| {
             let mut v: Value = serde_json::from_str(&ev.content).unwrap_or_else(|_| json!({}));
-            let pubkey = ev.pubkey.to_hex();
-            // Full npub fallback — truncated prefixes are grindable (see pubkey-display).
+            let pubkey = (ev.kind.as_u16() as u32 == KIND_MANAGED_AGENT)
+                .then(|| first_tag_value(ev, "d").map(str::to_owned))
+                .flatten()
+                .unwrap_or_else(|| ev.pubkey.to_hex());
             let npub = ev.pubkey.to_bech32().unwrap_or_else(|_| pubkey.clone());
-            // Always overwrite the pubkey with the event author — it's the
-            // authoritative source even if the content claims otherwise.
+            // Legacy events use the author; managed events use the d-tag above.
             if let Some(obj) = v.as_object_mut() {
                 obj.insert("pubkey".to_string(), json!(pubkey.clone()));
                 let fallback_name = obj

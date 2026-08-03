@@ -229,6 +229,22 @@ mod tests {
     }
 
     #[test]
+    fn managed_agent_profile_uses_d_tag_identity() {
+        let event = ev(
+            30177,
+            r#"{"name":"Scout","respond_to":"anyone"}"#,
+            vec![vec!["d", "agent-pubkey"]],
+        );
+        let value = super::super::agents_from_events(&[event]);
+        let agents: Vec<crate::managed_agents::RelayAgentInfo> =
+            serde_json::from_value(value["agents"].clone()).unwrap();
+
+        assert_eq!(agents.len(), 1);
+        assert_eq!(agents[0].pubkey, "agent-pubkey");
+        assert_eq!(agents[0].respond_to, Some(crate::managed_agents::RespondTo::Anyone));
+    }
+
+    #[test]
     fn search_users_maps_each_event() {
         let e1 = ev(0, r#"{"name":"a"}"#, vec![]);
         let e2 = ev(0, r#"{"display_name":"B"}"#, vec![]);

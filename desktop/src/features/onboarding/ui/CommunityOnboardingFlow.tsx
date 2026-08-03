@@ -3,6 +3,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Plus, Users } from "lucide-react";
 
 import {
+  completeCommunityOnboardingAfterSkip,
   markCommunityOnboardingComplete,
   useCommunityOnboarding,
 } from "@/features/onboarding/communityOnboarding";
@@ -236,12 +237,26 @@ export function CommunityOnboardingFlow({
       error: undefined,
     });
   const relayUrl = transaction?.relayUrl;
-  const finish = React.useCallback(async () => {
-    if (!relayUrl) return;
-    const identity = await getIdentity();
-    markCommunityOnboardingComplete(identity.pubkey, relayUrl);
-    clear();
-  }, [clear, relayUrl]);
+  const finish = React.useCallback(
+    async (reconcileStarterChannels = true) => {
+      if (!relayUrl) return;
+      const identity = await getIdentity();
+      if (!reconcileStarterChannels) {
+        markCommunityOnboardingComplete(identity.pubkey, relayUrl);
+        clear();
+        return;
+      }
+      void completeCommunityOnboardingAfterSkip({
+        queryClient,
+        pubkey: identity.pubkey,
+        relayUrl,
+        initializeStarterChannels,
+        markComplete: markCommunityOnboardingComplete,
+        clear,
+      });
+    },
+    [clear, queryClient, relayUrl],
+  );
   const finalize = React.useCallback(async () => {
     if (isPending || !relayUrl) return;
     setIsPending(true);
@@ -267,7 +282,7 @@ export function CommunityOnboardingFlow({
         update({ stage: "entering", error: undefined });
         return;
       }
-      await finish();
+      await finish(false);
     } catch (error) {
       setStarterChannelFailureCount((count) => count + 1);
       update({
