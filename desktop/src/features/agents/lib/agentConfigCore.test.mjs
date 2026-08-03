@@ -126,6 +126,34 @@ test("Codex omits separate effort because model IDs own it", () => {
   ]);
 });
 
+test("Hermes exposes model-aware ACP reasoning effort with its runtime persistence key", () => {
+  const model = deriveAgentConfigFieldModel({
+    config: {
+      ...config,
+      env_vars: { BUZZ_ACP_REASONING_EFFORT: "high" },
+    },
+    runtime: runtime("hermes", {
+      modelEnvVar: null,
+      providerEnvVar: "BUZZ_ACP_PROVIDER",
+      thinkingEnvVar: "BUZZ_ACP_REASONING_EFFORT",
+      supportsAcpNativeConfig: true,
+    }),
+    scope: "global",
+  });
+
+  assert.equal(field(model, "effort").optionSource, "harnessNative");
+  assert.deepEqual(field(model, "effort").currentPersistence, {
+    kind: "envVar",
+    key: "BUZZ_ACP_REASONING_EFFORT",
+  });
+  assert.deepEqual(field(model, "effort").targetApplication, {
+    kind: "acpConfigOption",
+    id: "reasoning_effort",
+    category: "reasoning",
+  });
+  assert.equal(field(model, "effort").value, "high");
+});
+
 test("catalog mismatch cleanup is named and restricted to onboarding", () => {
   const selectedRuntime = runtime("buzz-agent", {
     modelEnvVar: "BUZZ_AGENT_MODEL",

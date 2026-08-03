@@ -188,6 +188,7 @@ export type RawAcpRuntimeCatalogEntry = {
   model_env_var?: string | null;
   provider_env_var?: string | null;
   thinking_env_var?: string | null;
+  supports_acp_native_config?: boolean;
   install_hint: string;
   install_instructions_url: string;
   can_auto_install: boolean;
@@ -205,7 +206,6 @@ export type RawAcpRuntimeCatalogEntry = {
    */
   definition_env?: Record<string, string>;
 };
-
 export type {
   RawInstallRuntimeResult,
   RawInstallStepResult,
@@ -733,7 +733,6 @@ export function fromRawManagedAgent(agent: RawManagedAgent): ManagedAgent {
     respondToAllowlist: agent.respond_to_allowlist ?? [],
   };
 }
-
 export function fromRawAcpRuntimeCatalogEntry(
   entry: RawAcpRuntimeCatalogEntry,
 ): AcpRuntimeCatalogEntry {
@@ -749,6 +748,7 @@ export function fromRawAcpRuntimeCatalogEntry(
     modelEnvVar: entry.model_env_var ?? null,
     providerEnvVar: entry.provider_env_var ?? null,
     thinkingEnvVar: entry.thinking_env_var ?? null,
+    supportsAcpNativeConfig: entry.supports_acp_native_config ?? false,
     installHint: entry.install_hint,
     installInstructionsUrl: entry.install_instructions_url,
     canAutoInstall: entry.can_auto_install,

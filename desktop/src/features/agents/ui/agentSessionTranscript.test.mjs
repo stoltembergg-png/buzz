@@ -414,6 +414,18 @@ test("buildTranscript coalesces assistant chunks until the message is sealed", (
   assert.equal(messages[0].id, `assistant:${baseEvent.channelId}:msg-1`);
 });
 
+test("buildTranscript renders Hermes chunks that omit the optional messageId", () => {
+  const messages = buildTranscript([
+    sessionUpdate(72, {
+      sessionUpdate: "agent_message_chunk",
+      content: { type: "text", text: "Hermes response" },
+    }),
+  ]).filter((item) => item.type === "message" && item.role === "assistant");
+
+  assert.equal(messages.length, 1);
+  assert.equal(messages[0].text, "Hermes response");
+});
+
 test("buildTranscript starts a continuation for same-message chunks after sealing", () => {
   const messages = buildTranscript([
     assistantChunk(80, "msg-2", "First"),

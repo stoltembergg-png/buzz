@@ -128,19 +128,37 @@ export function deriveAgentConfigFieldModel({
   });
 
   if (runtime?.thinkingEnvVar) {
+    const usesNativeAcpConfig = runtime.supportsAcpNativeConfig === true;
     fields.push({
       kind: "effort",
-      optionSource:
-        runtime.id === "buzz-agent"
+      optionSource: usesNativeAcpConfig
+        ? "harnessNative"
+        : runtime.id === "buzz-agent"
           ? "buzzAgentCatalog"
           : "legacyProviderModelCatalog",
       currentPersistence: {
         kind: "envVar",
-        key: BUZZ_AGENT_THINKING_EFFORT,
+        // Legacy runtimes keep the historical Buzz-owned storage key even
+        // when their application env var differs. Native ACP runtimes own
+        // their persisted selector key.
+        key: usesNativeAcpConfig
+          ? runtime.thinkingEnvVar
+          : BUZZ_AGENT_THINKING_EFFORT,
       },
-      targetApplication: { kind: "envVar", key: runtime.thinkingEnvVar },
+      targetApplication: usesNativeAcpConfig
+        ? {
+            kind: "acpConfigOption",
+            id: "reasoning_effort",
+            category: "reasoning",
+          }
+        : { kind: "envVar", key: runtime.thinkingEnvVar },
       render: "control",
-      value: valueFromEnv(config, BUZZ_AGENT_THINKING_EFFORT),
+      value: valueFromEnv(
+        config,
+        usesNativeAcpConfig
+          ? runtime.thinkingEnvVar
+          : BUZZ_AGENT_THINKING_EFFORT,
+      ),
     });
   } else if (runtime?.id === "claude") {
     fields.push({

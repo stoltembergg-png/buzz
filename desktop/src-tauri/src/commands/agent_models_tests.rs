@@ -881,3 +881,53 @@ fn draft_agent_model_discovery_env_layers_all_three_tiers_in_order() {
         );
     }
 }
+
+#[test]
+fn normalize_agent_models_exposes_only_runtime_announced_reasoning_values() {
+    let raw = serde_json::json!({
+        "agent": { "name": "hermes", "version": "test" },
+        "stable": {
+            "configOptions": [
+                {
+                    "category": "model",
+                    "configId": "model",
+                    "options": [{ "value": "model-a", "displayName": "Model A" }]
+                },
+                {
+                    "category": "reasoning",
+                    "configId": "reasoning_effort",
+                    "options": [
+                        { "value": "low", "displayName": "Low" },
+                        { "value": "high", "displayName": "High" }
+                    ]
+                },
+                {
+                    "category": "reasoning",
+                    "configId": "unrelated_reasoning",
+                    "options": [{ "value": "invented", "displayName": "Invented" }]
+                }
+            ]
+        },
+        "unstable": null
+    });
+
+    let response = normalize_agent_models(&raw, Some("model-a".to_string()));
+    assert_eq!(
+        response.reasoning_efforts,
+        vec!["low".to_string(), "high".to_string()]
+    );
+    assert_eq!(response.models.len(), 1);
+    assert_eq!(response.models[0].id, "model-a");
+}
+
+#[test]
+fn normalize_agent_models_reports_no_reasoning_capability_when_unadvertised() {
+    let raw = serde_json::json!({
+        "agent": { "name": "hermes", "version": "test" },
+        "stable": { "configOptions": [] },
+        "unstable": null
+    });
+
+    let response = normalize_agent_models(&raw, None);
+    assert!(response.reasoning_efforts.is_empty());
+}

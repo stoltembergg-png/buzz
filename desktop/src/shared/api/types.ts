@@ -517,6 +517,8 @@ export type AcpRuntimeCatalogEntry = {
   providerEnvVar: string | null;
   /** Environment variable used to apply thinking effort, when supported. */
   thinkingEnvVar: string | null;
+  /** True when effort is a native ACP config option rather than an env-only knob. */
+  supportsAcpNativeConfig?: boolean;
   installHint: string;
   installInstructionsUrl: string;
   canAutoInstall: boolean;
@@ -545,14 +547,12 @@ export type AcpRuntimeCatalogEntry = {
    */
   definitionEnv?: Record<string, string>;
 };
-
 /** An AcpRuntimeCatalogEntry that is confirmed available — command and binaryPath are non-null. */
 export type AcpRuntime = AcpRuntimeCatalogEntry & {
   availability: "available";
   command: string;
   binaryPath: string;
 };
-
 export type {
   InstallRuntimeResult,
   InstallStepResult,
@@ -586,7 +586,6 @@ export type ManagedAgentPrereqs = {
   acp: CommandAvailability;
   mcp: CommandAvailability;
 };
-
 export type AgentModelsResponse = {
   agentName: string;
   agentVersion: string;
@@ -594,13 +593,14 @@ export type AgentModelsResponse = {
   agentDefaultModel: string | null;
   selectedModel: string | null;
   supportsSwitching: boolean;
+  /** Reasoning-effort values advertised by the active ACP session. */
+  reasoningEfforts: string[];
 };
 export type AgentModelInfo = {
   id: string;
   name: string | null;
   description: string | null;
 };
-
 // ── Config bridge types ──────────────────────────────────────────────────────
 
 export type ConfigOrigin =

@@ -3,6 +3,7 @@ import test from "node:test";
 
 import {
   deriveModelDiscoveryPending,
+  deriveReasoningCapability,
   getDiscoveredPersonaModelOptions,
   isCacheableDiscoveryResponse,
   isSuccessfulEmptyDiscovery,
@@ -17,6 +18,7 @@ function response(overrides = {}) {
     agentDefaultModel: null,
     selectedModel: null,
     supportsSwitching: true,
+    reasoningEfforts: [],
     ...overrides,
   };
 }
@@ -311,4 +313,22 @@ test("isSuccessfulEmptyDiscovery_stillPending_isFalse", () => {
     }),
     false,
   );
+});
+
+test("reasoning capability uses only values announced by active discovery", () => {
+  assert.deepEqual(
+    deriveReasoningCapability(response({ reasoningEfforts: ["low", "xhigh"] })),
+    { known: true, efforts: ["low", "xhigh"] },
+  );
+});
+
+test("unresolved reasoning discovery differs from resolved unsupported model", () => {
+  assert.deepEqual(deriveReasoningCapability(null), {
+    known: false,
+    efforts: [],
+  });
+  assert.deepEqual(deriveReasoningCapability(response()), {
+    known: true,
+    efforts: [],
+  });
 });

@@ -22,6 +22,21 @@ import {
   getProviderEffortConfig,
 } from "./buzzAgentConfig";
 
+const EFFORT_LABELS: Readonly<Record<string, string>> = {
+  none: "Desativado",
+  minimal: "Mínimo",
+  low: "Baixo",
+  medium: "Médio",
+  high: "Alto",
+  xhigh: "Extra alto",
+  max: "Máximo",
+  ultra: "Ultra",
+};
+
+export function getEffortDisplayLabel(value: string): string {
+  return EFFORT_LABELS[value] ?? value;
+}
+
 /**
  * Shared effort-select dropdown for the `BUZZ_AGENT_THINKING_EFFORT` env var.
  *
@@ -41,6 +56,7 @@ export function EffortSelectField({
   emptyOptionLabel,
   effortDefault,
   effortValid,
+  effortOptions,
   fieldClassName,
   htmlFor,
   inheritedEffort,
@@ -64,6 +80,8 @@ export function EffortSelectField({
   effortDefault: string | null;
   /** Valid effort values for this provider/model. */
   effortValid: ReadonlyArray<string>;
+  /** Exact values exposed by a native runtime; when set, no static catalog is used. */
+  effortOptions?: ReadonlyArray<string>;
   /** Optional class override for the field wrapper. */
   fieldClassName?: string;
   /** `htmlFor` attribute for the label element. */
@@ -102,20 +120,24 @@ export function EffortSelectField({
   useCustomSelect?: boolean;
 }) {
   const inheritLabel = inheritedEffort
-    ? `Inherit (${inheritedEffort})`
+    ? `Herdar (${getEffortDisplayLabel(inheritedEffort)})`
     : effortDefault === null
-      ? "Inherit (default)"
-      : (inheritFallbackLabel ?? "Inherit");
-  const effortOptions: AgentDropdownOption[] = [
+      ? "Herdar (padrão)"
+      : (inheritFallbackLabel ?? "Herdar");
+  const availableEffortValues =
+    effortOptions ?? BUZZ_AGENT_THINKING_EFFORT_VALUES;
+  const dropdownOptions: AgentDropdownOption[] = [
     { label: emptyOptionLabel ?? inheritLabel, value: "" },
-    ...BUZZ_AGENT_THINKING_EFFORT_VALUES.flatMap((v) => {
+    ...availableEffortValues.flatMap((v) => {
       const isValid = (effortValid as readonly string[]).includes(v);
       if (!showUnavailableOptions && !isValid) return [];
       const isDefault = v === effortDefault;
       return [
         {
           disabled: !isValid,
-          label: isDefault ? `${v} (default)` : v,
+          label: isDefault
+            ? `${getEffortDisplayLabel(v)} (padrão)`
+            : getEffortDisplayLabel(v),
           value: v,
         },
       ];
@@ -136,7 +158,7 @@ export function EffortSelectField({
           disabled={disabled}
           id={htmlFor}
           onValueChange={onChange}
-          options={effortOptions}
+          options={dropdownOptions}
           placeholderClassName={placeholderClassName}
           placeholderValue={emptyOptionLabel ? "" : undefined}
           testId={testId}
@@ -154,7 +176,7 @@ export function EffortSelectField({
           onChange={(event) => onChange(event.target.value)}
           value={currentEffort}
         >
-          {effortOptions.map((option) => (
+          {dropdownOptions.map((option) => (
             <option
               disabled={option.disabled}
               key={option.value}
@@ -184,21 +206,24 @@ export function EffortSelectField({
 export function useEffortAutoClear({
   currentEffort,
   effortValid,
+  enabled = true,
   onClear,
 }: {
   currentEffort: string;
   effortValid: ReadonlyArray<string>;
+  enabled?: boolean;
   onClear: () => void;
 }): void {
   // biome-ignore lint/correctness/useExhaustiveDependencies: onClear excluded intentionally — see comment above
   React.useEffect(() => {
+    if (!enabled) return;
     if (
       currentEffort !== "" &&
       !(effortValid as readonly string[]).includes(currentEffort)
     ) {
       onClear();
     }
-  }, [effortValid, currentEffort]);
+  }, [effortValid, currentEffort, enabled]);
 }
 
 export function BuzzAgentModelTuningFields({

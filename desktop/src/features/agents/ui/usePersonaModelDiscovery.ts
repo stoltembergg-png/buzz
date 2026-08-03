@@ -161,10 +161,28 @@ export function isSuccessfulEmptyDiscovery({
   );
 }
 
+/**
+ * Keep ACP reasoning capability discovery explicit: a resolved empty list means
+ * "the active runtime/model declared no control", while `null` means discovery
+ * has not resolved and must not clear a persisted value yet.
+ */
+export function deriveReasoningCapability(
+  response: AgentModelsResponse | null,
+): {
+  known: boolean;
+  efforts: readonly string[];
+} {
+  return {
+    efforts: response?.reasoningEfforts ?? [],
+    known: response !== null,
+  };
+}
+
 export function usePersonaModelDiscovery({
   envVars,
   isCustomProviderEditing,
   modelFieldVisible,
+  model,
   open,
   provider,
   selectedRuntime,
@@ -172,6 +190,7 @@ export function usePersonaModelDiscovery({
   envVars: EnvVarsValue;
   isCustomProviderEditing: boolean;
   modelFieldVisible: boolean;
+  model?: string | null;
   open: boolean;
   provider: string;
   selectedRuntime: AcpRuntimeCatalogEntry | undefined;
@@ -228,6 +247,7 @@ export function usePersonaModelDiscovery({
       agentCommand: discoveryAgentCommand,
       agentArgs: modelDiscoveryArgsKey,
       provider: trimmedProvider,
+      model: model || null,
       envVars: modelDiscoveryEnvKey,
     });
   }, [
@@ -235,6 +255,7 @@ export function usePersonaModelDiscovery({
     discoveryAgentCommand,
     modelDiscoveryArgsKey,
     modelDiscoveryEnvKey,
+    model,
     trimmedProvider,
   ]);
 
@@ -290,6 +311,7 @@ export function usePersonaModelDiscovery({
       void discoverAgentModels({
         agentCommand: activeAgentCommand,
         agentArgs: selectedRuntimeDefaultArgs ?? [],
+        model: model || null,
         provider: trimmedProvider || undefined,
         envVars,
         definitionEnv: selectedRuntimeDefinitionEnv ?? {},
@@ -358,6 +380,7 @@ export function usePersonaModelDiscovery({
     discoveryAgentCommand,
     envVars,
     modelDiscoveryKey,
+    model,
     selectedRuntimeAvailability,
     selectedRuntimeDefaultArgs,
     selectedRuntimeDefinitionEnv,
@@ -395,6 +418,9 @@ export function usePersonaModelDiscovery({
     discoveredModelOptions,
     modelDiscoveryPending,
   });
+  const reasoningCapability = deriveReasoningCapability(
+    activeModelDiscoveryData,
+  );
 
   return {
     discoveredModelOptions,
@@ -404,5 +430,7 @@ export function usePersonaModelDiscovery({
         ? null
         : activeModelDiscoveryStatus,
     modelDiscoverySuccessfulEmpty,
+    reasoningCapabilityKnown: reasoningCapability.known,
+    reasoningEfforts: reasoningCapability.efforts,
   };
 }

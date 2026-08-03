@@ -1398,7 +1398,6 @@ fn discover_acp_runtime_phase1(runtime: &'static KnownAcpRuntime) -> PartialEntr
         && buzz_managed_node_bin_dir().is_none()
         && resolve_command("npm").is_none()
         && resolve_command("node").is_none();
-
     PartialEntry {
         runtime,
         entry: AcpRuntimeCatalogEntry {
@@ -1413,6 +1412,7 @@ fn discover_acp_runtime_phase1(runtime: &'static KnownAcpRuntime) -> PartialEntr
             model_env_var: runtime.model_env_var.map(str::to_string),
             provider_env_var: runtime.provider_env_var.map(str::to_string),
             thinking_env_var: runtime.thinking_env_var.map(str::to_string),
+            supports_acp_native_config: runtime.supports_acp_native_config,
             install_hint,
             install_instructions_url: install_instructions_url.to_string(),
             can_auto_install,
@@ -1554,7 +1554,6 @@ pub fn discover_acp_runtimes_from(
             };
 
             let default_args = normalize_agent_args(&def.command, def.args.clone());
-
             entries.push(AcpRuntimeCatalogEntry {
                 id: def.id.clone(),
                 label: def.label.clone(),
@@ -1571,6 +1570,7 @@ pub fn discover_acp_runtimes_from(
                 model_env_var: None,
                 provider_env_var: None,
                 thinking_env_var: None,
+                supports_acp_native_config: false,
                 install_hint: def.install_hint.clone(),
                 install_instructions_url: def.install_instructions_url.clone(),
                 // Security line: custom definitions carry no install scripts.
