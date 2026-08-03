@@ -7,7 +7,7 @@
 - Fix guest onboarding after `Skip for now` by reconciling the public starter channels in the background and ensuring individual channel membership.
 - Discover owner-created managed agents published as `kind:30177`, preserving the agent identity from the `d`-tag.
 - Preserve distinct managed-agent identities when labels are equal, and make shared `Anyone` agents available to guest autocomplete and mentions.
-- Point the desktop updater fallback at the `Stoltemberg/buzz` fork and add the rolling updater release configuration.
+- Point the desktop updater fallback at the `stoltembergg-png/buzz` repository and add the rolling updater release configuration.
 
 ### Validation
 
