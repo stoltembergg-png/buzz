@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.5.6 - 2026-08-03
+
+### Desktop
+
+- Publish a SemVer-compatible updater test release from the migrated `stoltembergg-png/buzz` repository.
+
 ## v0.5.5 - 2026-08-03
 
 ### Desktop
