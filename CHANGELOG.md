@@ -1,6 +1,40 @@
 # Changelog
 
-## [0.5.3-hermes.1] - 2026-08-02
+## v0.5.4
+
+### Desktop and shared changes
+
+- feat(desktop): add model-aware Hermes reasoning effort ([`74557d3dcedf0fe60920c6f169e59085ab68e1d4`](https://github.com/Stoltemberg/buzz/commit/74557d3dcedf0fe60920c6f169e59085ab68e1d4))
+- feat(desktop): integrate Hermes as ACP runtime ([`438be58f02388ba3bbfdd28c2cab9aa5de7d029c`](https://github.com/Stoltemberg/buzz/commit/438be58f02388ba3bbfdd28c2cab9aa5de7d029c))
+- feat(projects): add buzz projects CLI commands (NIP-MP kind:30621) ([#4020](https://github.com/Stoltemberg/buzz/pull/4020)) ([`b7bb15122e8a2053b545dc2210afc167f6c7a626`](https://github.com/Stoltemberg/buzz/commit/b7bb15122e8a2053b545dc2210afc167f6c7a626))
+- fix(desktop): keep thread-open affordance in archived channels ([#4012](https://github.com/Stoltemberg/buzz/pull/4012)) ([`8e81afa431deecd172f1ad6aab6f022f31cd812c`](https://github.com/Stoltemberg/buzz/commit/8e81afa431deecd172f1ad6aab6f022f31cd812c))
+- fix(desktop): point Oh My Pi preset at omp.sh ([#3516](https://github.com/Stoltemberg/buzz/pull/3516)) ([`3ade48d5030a8f7dbb9d3693f171e5544dcd8df1`](https://github.com/Stoltemberg/buzz/commit/3ade48d5030a8f7dbb9d3693f171e5544dcd8df1))
+- fix(mesh): stop restarting a busy or loading shared-compute node ([#3909](https://github.com/Stoltemberg/buzz/pull/3909)) ([`fa1a5b1a797870724f5c7e7e26931861a60f22cb`](https://github.com/Stoltemberg/buzz/commit/fa1a5b1a797870724f5c7e7e26931861a60f22cb))
+- fix(desktop): preserve first huddle speech ([#3962](https://github.com/Stoltemberg/buzz/pull/3962)) ([`45314fc504113aec7c54ae6520cfe5e1562aae40`](https://github.com/Stoltemberg/buzz/commit/45314fc504113aec7c54ae6520cfe5e1562aae40))
+- feat(desktop): Agent Trading Cards — mintable agent-snapshot card PNGs with optional NIP-44 lock ([#3278](https://github.com/Stoltemberg/buzz/pull/3278)) ([`eb049ddf815d48195e1713afe039d28c950d7933`](https://github.com/Stoltemberg/buzz/commit/eb049ddf815d48195e1713afe039d28c950d7933))
+- feat(relay): accept kind:30621 multi-repo projects at ingest ([#3171](https://github.com/Stoltemberg/buzz/pull/3171)) ([`cb9701cd30fb344bf134585634a09007f3155bfb`](https://github.com/Stoltemberg/buzz/commit/cb9701cd30fb344bf134585634a09007f3155bfb))
+
+### Other repository changes
+
+- chore: remove GitHub workflows ([`6aa3296515e4d5fdc369b81a76d59e94c1c3516f`](https://github.com/Stoltemberg/buzz/commit/6aa3296515e4d5fdc369b81a76d59e94c1c3516f))
+- fix(git): allow deleting the default branch ([#4297](https://github.com/Stoltemberg/buzz/pull/4297)) ([`fc598f5f8d70728d11d0712b9fa8e3acc44ea4c3`](https://github.com/Stoltemberg/buzz/commit/fc598f5f8d70728d11d0712b9fa8e3acc44ea4c3))
+- docs: formal spec for remote agents and their management ([#3748](https://github.com/Stoltemberg/buzz/pull/3748)) ([`28ae6cd2174309529305724e455c7ca082f6fe4b`](https://github.com/Stoltemberg/buzz/commit/28ae6cd2174309529305724e455c7ca082f6fe4b))
+- fix(nip-oa): accept raw Nostr tag form in parse_json_array ([#4203](https://github.com/Stoltemberg/buzz/pull/4203)) ([`89bf03c05df795a3575b7abbe648be898ef13388`](https://github.com/Stoltemberg/buzz/commit/89bf03c05df795a3575b7abbe648be898ef13388))
+- perf(relay): serve relay-membership checks from the read replica ([#4124](https://github.com/Stoltemberg/buzz/pull/4124)) ([`ac4fa13b8e4d947071d57deb6918dcf12bf74961`](https://github.com/Stoltemberg/buzz/commit/ac4fa13b8e4d947071d57deb6918dcf12bf74961))
+- chore(deps): bump nostr-relay-pool for RUSTSEC-2026-0224 ([#4139](https://github.com/Stoltemberg/buzz/pull/4139)) ([`9d6726e5b387310975f5809473ce8372f6fde0dc`](https://github.com/Stoltemberg/buzz/commit/9d6726e5b387310975f5809473ce8372f6fde0dc))
+- docs(nostr): document #h requirement for live reaction subscriptions ([#3487](https://github.com/Stoltemberg/buzz/pull/3487)) ([`756dd7f65d6f2995e9188a0ffe54294057f8ef4f`](https://github.com/Stoltemberg/buzz/commit/756dd7f65d6f2995e9188a0ffe54294057f8ef4f))
+- docs(chart): fix ArgoCD example for native OCI sources (full artifact repoURL + path) ([#3426](https://github.com/Stoltemberg/buzz/pull/3426)) ([`36cf932ff0105a4cf574fc687deb4c1cb01bc0d1`](https://github.com/Stoltemberg/buzz/commit/36cf932ff0105a4cf574fc687deb4c1cb01bc0d1))
+- docs(readme): clarify which release asset to download per platform ([#3481](https://github.com/Stoltemberg/buzz/pull/3481)) ([`8d5afb606763fcaffd3af811be2106e41cc7347d`](https://github.com/Stoltemberg/buzz/commit/8d5afb606763fcaffd3af811be2106e41cc7347d))
+- fix(relay): allow open relays to set their NIP-11 workspace icon (kind:9033) ([#3998](https://github.com/Stoltemberg/buzz/pull/3998)) ([`5765fc74b77224f0207ddd4b41736a5ff18d333d`](https://github.com/Stoltemberg/buzz/commit/5765fc74b77224f0207ddd4b41736a5ff18d333d))
+- docs: note that addressable channel events scope by d, not h ([#4103](https://github.com/Stoltemberg/buzz/pull/4103)) ([`3d7712cc36e8da563cb1c121fc58bfc505d38496`](https://github.com/Stoltemberg/buzz/commit/3d7712cc36e8da563cb1c121fc58bfc505d38496))
+- docs: fix stale kind count, quick-start numbering, and empty Further Reading ([#2613](https://github.com/Stoltemberg/buzz/pull/2613)) ([`909a3b2c318b2ec477a3438a998a3b611f5b6d6a`](https://github.com/Stoltemberg/buzz/commit/909a3b2c318b2ec477a3438a998a3b611f5b6d6a))
+- docs: add one-click Railway deploy for a hosted relay ([#2733](https://github.com/Stoltemberg/buzz/pull/2733)) ([`19d57b0d46baa55814ac737041a36d0b405c9f64`](https://github.com/Stoltemberg/buzz/commit/19d57b0d46baa55814ac737041a36d0b405c9f64))
+- fix(buzz-acp): thread cache-read tokens into NIP-AM kind:44200 events ([#3999](https://github.com/Stoltemberg/buzz/pull/3999)) ([`b1b283cd4c7f926e12eeee8ae1f38c7471922b16`](https://github.com/Stoltemberg/buzz/commit/b1b283cd4c7f926e12eeee8ae1f38c7471922b16))
+- fix(release): preserve main in desktop PR body ([#3979](https://github.com/Stoltemberg/buzz/pull/3979)) ([`e5e5bac2a932b2b2e4eb6b559d5545a992c21b96`](https://github.com/Stoltemberg/buzz/commit/e5e5bac2a932b2b2e4eb6b559d5545a992c21b96))
+
+[Compare desktop-v0.5.3...desktop-v0.5.4](https://github.com/Stoltemberg/buzz/compare/desktop-v0.5.3...desktop-v0.5.4)
+
+## v0.5.3-hermes.1 - 2026-08-02
 
 ### Hermes ACP runtime
 
