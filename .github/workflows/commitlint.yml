@@ -1,0 +1,36 @@
+name: Commit Lint
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  commitlint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install commitlint
+        run: npm install -g @commitlint/cli @commitlint/config-conventional
+      - name: Validate PR title (conventional commits)
+        run: |
+          echo "${{ github.event.pull_request.title }}" | commitlint --config /dev/stdin <<'EOF'
+          module.exports = {
+            extends: ['@commitlint/config-conventional'],
+            rules: {
+              'type-enum': [2, 'always', [
+                'feat', 'fix', 'docs', 'style', 'refactor',
+                'perf', 'test', 'build', 'ci', 'chore', 'revert'
+              ]],
+              'subject-max-length': [2, 'always', 120],
+            }
+          };
+          EOF
