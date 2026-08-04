@@ -1,0 +1,37 @@
+{
+  "id": "E-GOV-201",
+  "task": "T-GOV-201",
+  "pr": "PR-002",
+  "sha": "PENDING",
+  "platform": {
+    "os": "windows-10",
+    "arch": "x86_64"
+  },
+  "tools": {
+    "node": "26.5.1"
+  },
+  "commands": [
+    {
+      "cmd": "node --test .spec/features/pr-002-templates/contract.test.mjs",
+      "exit": 0,
+      "stdout": "tests 8 / pass 8 / fail 0 / duration_ms 132",
+      "duration_ms": 132
+    }
+  ],
+  "results": {
+    "tests_run": 8,
+    "tests_passed": 8,
+    "tests_failed": 0,
+    "suites": 1,
+    "contract_test_path": ".spec/features/pr-002-templates/contract.test.mjs",
+    "spec_path": ".spec/features/pr-002-templates/spec.md",
+    "templates_added": [
+      ".spec/templates/spec.md",
+      ".spec/templates/tasks.md",
+      ".spec/templates/contract.test.mjs",
+      ".spec/templates/evidence.json"
+    ],
+    "pr_template_updated": ".github/PULL_REQUEST_TEMPLATE.md"
+  },
+  "links": []
+}
