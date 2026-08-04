@@ -39,6 +39,7 @@ mod memory_scope;
 mod persistence_harness;
 mod profile_bootstrap;
 mod provider_contract;
+mod provider_discovery;
 mod runtime_scope;
 mod util;
 #[cfg(target_os = "linux")]
