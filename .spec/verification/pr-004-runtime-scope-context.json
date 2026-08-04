@@ -1,0 +1,13 @@
+{
+  "feature": "pr-004-runtime-scope-context",
+  "timestamp": "2026-08-04T05:52:56Z",
+  "gitRev": "adc87576",
+  "platform": { "os": "MINGW64_NT-10.0-26100", "arch": "x86_64" },
+  "tools": { "node": "v26.5.1" },
+  "command": "node --test /c/Users/Gabriel/Desktop/buzz-png/.spec/features/pr-004-runtime-scope-context/contract.test.mjs",
+  "exitCode": 0,
+  "specACs": ["AC-MEM-401","AC-MEM-402","AC-MEM-403","AC-MEM-404","AC-MEM-405","AC-MEM-406","AC-MEM-407","AC-MEM-408"],
+  "testACs": ["AC-MEM-401","AC-MEM-402","AC-MEM-403","AC-MEM-404","AC-MEM-405","AC-MEM-406","AC-MEM-407","AC-MEM-408"],
+  "passedACs": [],
+  "results": { "totalSpecACs": 8, "totalTestACs": 8 }
+}
