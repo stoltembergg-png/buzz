@@ -20,9 +20,9 @@ jobs:
           node-version: 22
       - name: Install commitlint
         run: npm install -g @commitlint/cli @commitlint/config-conventional
-      - name: Validate PR title (conventional commits)
+      - name: Create config
         run: |
-          echo "${{ github.event.pull_request.title }}" | commitlint --config /dev/stdin <<'EOF'
+          cat > commitlint.config.cjs << 'EOF'
           module.exports = {
             extends: ['@commitlint/config-conventional'],
             rules: {
@@ -34,3 +34,5 @@ jobs:
             }
           };
           EOF
+      - name: Validate PR title
+        run: echo "${{ github.event.pull_request.title }}" | commitlint
