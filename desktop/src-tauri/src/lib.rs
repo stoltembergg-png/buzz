@@ -34,6 +34,7 @@ mod shutdown;
 mod templates;
 #[cfg(target_os = "macos")]
 mod tray_menu;
+mod memory_scope;
 mod runtime_scope;
 mod util;
 #[cfg(target_os = "linux")]
