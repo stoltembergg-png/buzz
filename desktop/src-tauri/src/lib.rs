@@ -35,6 +35,7 @@ mod templates;
 #[cfg(target_os = "macos")]
 mod tray_menu;
 mod memory_scope;
+mod profile_bootstrap;
 mod runtime_scope;
 mod util;
 #[cfg(target_os = "linux")]
