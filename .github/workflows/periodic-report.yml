@@ -65,6 +65,23 @@ jobs:
           COMMITS=$(git log --since="$YESTERDAY 00:00:00" --until="$TODAY 23:59:59" --oneline --no-merges 2>/dev/null | head -30 || true)
           COMMITS="${COMMITS:-_None_}"
 
+          # Rust source files and line counts (project structure)
+          RUST_FILES=$(find desktop/src-tauri/src crates -name '*.rs' -not -path '*/target/*' 2>/dev/null | wc -l || echo "0")
+          RUST_LINES=$(find desktop/src-tauri/src crates -name '*.rs' -not -path '*/target/*' -exec cat {} + 2>/dev/null | wc -l || echo "0")
+
+          # Rust test count
+          RUST_TESTS=$(grep -r '#\[test\]' desktop/src-tauri/src crates --include='*.rs' -l 2>/dev/null | wc -l || echo "0")
+
+          # Spec features implemented
+          SPEC_FEATURES=$(ls -d .spec/features/*/ 2>/dev/null | wc -l || echo "0")
+          SPEC_EVIDENCE=$(ls .spec/verification/*.json 2>/dev/null | wc -l || echo "0")
+
+          # Spec verification files (recent)
+          VERIFY_FILES=$(ls -la .spec/verification/*.json 2>/dev/null | tail -10 || echo "_None_")
+
+          # Roadmap spec docs
+          ROADMAP_PRS=$(ls docs/roadmap/prs/PR-*.md 2>/dev/null | wc -l || echo "0")
+
           # Recent issues
           OPEN_ISSUES=$(gh issue list --state open --limit 20 \
             --json number,title,labels \
@@ -89,12 +106,6 @@ jobs:
             echo "OPEN_DRAFTS<<DRAFTS_EOF"
             echo "$OPEN_DRAFTS"
             echo "DRAFTS_EOF"
-            echo "OPEN_READY<<READY_EOF"
-            echo "$OPEN_READY"
-            echo "READY_EOF"
-            echo "FAILED_CHECKS<<CHECKS_EOF"
-            echo "$FAILED_CHECKS"
-            echo "CHECKS_EOF"
             echo "COMMITS<<COMMITS_EOF"
             echo "$COMMITS"
             echo "COMMITS_EOF"
@@ -104,6 +115,15 @@ jobs:
             echo "LATEST_RELEASE<<RELEASE_EOF"
             echo "$LATEST_RELEASE"
             echo "RELEASE_EOF"
+            echo "RUST_FILES=$RUST_FILES"
+            echo "RUST_LINES=$RUST_LINES"
+            echo "RUST_TESTS=$RUST_TESTS"
+            echo "SPEC_FEATURES=$SPEC_FEATURES"
+            echo "SPEC_EVIDENCE=$SPEC_EVIDENCE"
+            echo "ROADMAP_PRS=$ROADMAP_PRS"
+            echo "VERIFY_FILES<<VERIFY_EOF"
+            echo "$VERIFY_FILES"
+            echo "VERIFY_EOF"
           } >> "$GITHUB_ENV"
 
       - name: Generate report
@@ -116,35 +136,37 @@ jobs:
 
           # Build the context prompt
           PROMPT=$(cat <<'PROMPT_EOF'
-          Você é um engenheiro de desenvolvimento sênior analisando o estado periódico de um repositório GitHub (fork do Buzz/Hermes).
+          Você é um engenheiro de desenvolvimento sênior analisando o estado de um projeto de software (fork do Buzz/Hermes — app desktop Tauri+Rust+React com agentes AI via Nostr).
+          Foque no PROJETO: código, arquitetura, correções, melhorias e progresso do roadmap.
+          NÃO foque em CI/CD, workflows do GitHub, checks de Actions, ou status de PRs como métrica principal.
           Gere um relatório estruturado em markdown com as seguintes seções:
 
           ## Resumo
-          - O que foi feito (PRs mergeadas, commits)
-          - Estado geral do repositório
+          - Progresso do projeto desde a última análise
+          - Módulos implementados e estado geral do código
 
           ## Pontos Fortes
-          - O que foi bem executado
+          - O que está bem arquitetado ou implementado
 
-          ## Problemas Detectados
-          - Checks CI falhando
-          - PRs abertas sem checks
-          - Anomalias nos testes
+          ## Problemas no Projeto
+          - Bugs potenciais, code smells, débito técnico
+          - Módulos faltantes ou incompletos
+          - Riscos arquiteturais
 
           ## Correcoes e Melhorias Sugeridas
-          - Para cada problema, descreva:
-            - O que: problema específico
-            - Como corrigir: passo a passo técnico
+          - Para cada item, descreva:
+            - O que: problema ou melhoria específica no código/projeto
+            - Como corrigir: passo a passo técnico (arquivos, funções, abordagem)
             - Prioridade: alta/média/baixa
-            - Espec referenciada: se aplica a algum REQ/AC do roadmap
-          - Sugira as próximas 2-3 PRs do roadmap que deveriam ser implementadas
+            - Espec referenciada: REQ/AC do roadmap se aplicável
+          - Sugira as próximas 2-3 PRs do roadmap que deveriam ser implementadas, com justificativa técnica
 
           ## Labels Sugeridas
-          - Liste 1-3 labels que descrevem o tema central do relatório (ex: memory, ci, governance, security, bug, enhancement)
+          - 1-3 labels sobre o tema do relatório (ex: memory, providers, skills, plugins, architecture)
 
-          ## Spec Checklist
-          - Liste os requisitos do roadmap que estão em risco (deadline, dependências)
-          - Liste os requisitos que progrediram
+          ## Roadmap
+          - Requisitos em risco (dependências bloqueadas, prazos)
+          - Requisitos que progrediram desde a última análise
 
           Dados do repositório:
           PROMPT_EOF
@@ -153,20 +175,19 @@ jobs:
           # Append collected data to the prompt
           CONTEXT=""
 
-          CONTEXT+="### PRs Mergeadas (últimas 24h)
-          $MERGED_PRS
-
-          ### PRs Draft Abertas
-          $OPEN_DRAFTS
-
-          ### PRs Ready Abertas
-          $OPEN_READY
-
-          ### Checks CI Falhando
-          $FAILED_CHECKS
+          CONTEXT+="### Estrutura do Projeto
+          - Arquivos Rust: $RUST_FILES
+          - Linhas de código Rust: $RUST_LINES
+          - Arquivos com testes Rust: $RUST_TESTS
+          - Features de spec implementadas: $SPEC_FEATURES
+          - Evidências de verificação: $SPEC_EVIDENCE
+          - PRs de roadmap documentadas: $ROADMAP_PRS
 
           ### Commits Recentes
           $COMMITS
+
+          ### PRs Mergeadas (últimas 24h)
+          $MERGED_PRS
 
           ### Issues Abertas
           $OPEN_ISSUES
@@ -174,13 +195,19 @@ jobs:
           ### Releases Recentes
           $LATEST_RELEASE
 
+          ### Evidências de Verificação (specs)
+          $VERIFY_FILES
+
           ### Data do Relatório
           $REPORT_DATE
 
           ### Roadmap de Referência
-          O repositório segue um roadmap em docs/roadmap/hermes-buzz-delivery-roadmap.md com 46 PRs planejadas (PR-001 a PR-046).
+          O projeto segue um roadmap em docs/roadmap/hermes-buzz-delivery-roadmap.md com 46 PRs planejadas (PR-001 a PR-046).
           Cada PR tem REQ-XXX-NNN (requisitos) e AC-XXX-NNN (critérios de aceitação).
-          As PRs implementadas passam por verify-feature.sh que valida spec ↔ test ↔ evidence.
+          As PRs implementadas passam por verify-feature.sh que valida spec, test e evidence.
+          Já implementadas: PR-001 (roadmap), PR-002 (templates), PR-003 (verificador), PR-004 (RuntimeScopeContext), PR-005 (HermesMemoryScope), PR-006 (profile bootstrap), PR-007 (HERMES_HOME injection), PR-008 (persistence harness).
+          Próxima: PR-009 (provider capability contract).
+          Fases: Memory (completa), Providers (PR-009..014), Context Compression (PR-015..018), Skills (PR-019..022), MCP (PR-023..027), Plugins (PR-028..032), Observability (PR-033..036), Self-Improvement (PR-037..041), Credentials (PR-042..044), Release (PR-045..046).
           "
 
           # Call Xiaomi MiMo API (v2.5)
