@@ -36,6 +36,7 @@ mod templates;
 mod tray_menu;
 mod hermes_home_inject;
 mod memory_scope;
+mod persistence_harness;
 mod profile_bootstrap;
 mod runtime_scope;
 mod util;
