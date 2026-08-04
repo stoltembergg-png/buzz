@@ -1,0 +1,344 @@
+name: MiMo Daily Report
+
+on:
+  schedule:
+    # 09:00 UTC daily = 06:00 BRT
+    - cron: '0 9 * * *'
+  workflow_dispatch:
+    inputs:
+      force_new_issue:
+        description: 'Force a new issue even if a related one is open'
+        required: false
+        default: 'false'
+
+permissions:
+  issues: write
+  contents: read
+  pull-requests: read
+  actions: read
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Collect repo state
+        id: collect
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          TODAY=$(date -u +%Y-%m-%d)
+          YESTERDAY=$(date -u -d 'yesterday' +%Y-%m-%d)
+
+          # Merged PRs in the last 24h
+          MERGED=$(gh pr list --state merged --limit 50 \
+            --json number,title,mergedAt,labels,headRefName \
+            --jq '.[] | select(.mergedAt >= "'$YESTERDAY'T00:00:00Z") | "- #\(.number) \(.title) [\(.headRefName)]"')
+          MERGED="${MERGED:-_None_}"
+
+          # Open draft PRs (roadmap)
+          OPEN_DRAFTS=$(gh pr list --state open --draft --limit 50 \
+            --json number,title,headRefName \
+            --jq '.[] | "- #\(.number) \(.title) [\(.headRefName)]"')
+          OPEN_DRAFTS="${OPEN_DRAFTS:-_None_}"
+
+          # Open PRs ready for review
+          OPEN_READY=$(gh pr list --state open --no-draft --limit 20 \
+            --json number,title,headRefName \
+            --jq '.[] | "- #\(.number) \(.title) [\(.headRefName)]"')
+          OPEN_READY="${OPEN_READY:-_None_}"
+
+          # CI check results from the last 24h
+          FAILED_CHECKS=$(gh run list --limit 30 --json databaseId,name,status,conclusion,createdAt \
+            --jq '.[] | select(.createdAt >= "'$YESTERDAY'T00:00:00Z" and .conclusion == "failure") | "- \(.name) (run \(.databaseId)): \(.conclusion)"')
+          FAILED_CHECKS="${FAILED_CHECKS:-_None_}"
+
+          # Commits in the last 24h
+          COMMITS=$(git log --since="$YESTERDAY 00:00:00" --until="$TODAY 23:59:59" --oneline --no-merges 2>/dev/null | head -30)
+          COMMITS="${COMMITS:-_None_}"
+
+          # Recent issues
+          OPEN_ISSUES=$(gh issue list --state open --limit 20 \
+            --json number,title,labels \
+            --jq '.[] | "- #\(.number) \(.title) [\([.labels[].name] | join(", "))]"')
+          OPEN_ISSUES="${OPEN_ISSUES:-_None_}"
+
+          # Latest release
+          LATEST_RELEASE=$(gh release list --limit 3 \
+            --json tagName,name,isDraft,publishedAt \
+            --jq '.[] | "- \(.name) (\(.tagName)) draft=\(.isDraft) \(.publishedAt)"')
+          LATEST_RELEASE="${LATEST_RELEASE:-_None_}"
+
+          # Recent test/verify results
+          VERIFY_FILES=$(ls -la .spec/verification/*.json 2>/dev/null | tail -10 || echo "_None_")
+
+          # Write to GITHUB_ENV and output files
+          {
+            echo "REPORT_DATE=$TODAY"
+            echo "MERGED_PRS<<MERGED_EOF"
+            echo "$MERGED"
+            echo "MERGED_EOF"
+            echo "OPEN_DRAFTS<<DRAFTS_EOF"
+            echo "$OPEN_DRAFTS"
+            echo "DRAFTS_EOF"
+            echo "OPEN_READY<<READY_EOF"
+            echo "$OPEN_READY"
+            echo "READY_EOF"
+            echo "FAILED_CHECKS<<CHECKS_EOF"
+            echo "$FAILED_CHECKS"
+            echo "CHECKS_EOF"
+            echo "COMMITS<<COMMITS_EOF"
+            echo "$COMMITS"
+            echo "COMMITS_EOF"
+            echo "OPEN_ISSUES<<ISSUES_EOF"
+            echo "$OPEN_ISSUES"
+            echo "ISSUES_EOF"
+            echo "LATEST_RELEASE<<RELEASE_EOF"
+            echo "$LATEST_RELEASE"
+            echo "RELEASE_EOF"
+          } >> "$GITHUB_ENV"
+
+      - name: Generate report via Xiaomi MiMo v2.5
+        id: mimo
+        env:
+          XIAOMI_MIMO_API_KEY: ${{ secrets.XIAOMI_MIMO_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          # Build the context prompt
+          PROMPT=$(cat <<'PROMPT_EOF'
+          Você é um engenheiro de desenvolvimento sênior analisando o estado diário de um repositório GitHub (fork do Buzz/Hermes).
+          Gere um relatório estruturado em markdown com as seguintes seções:
+
+          ## 📊 Resumo do Dia
+          - O que foi feito (PRs mergeadas, commits)
+          - Estado geral do repositório
+
+          ## ✅ Pontos Fortes
+          - O que foi bem executado
+
+          ## ⚠️ Problemas Detectados
+          - Checks CI falhando
+          - PRs abertas sem checks
+          - Anomalias nos testes
+
+          ## 🔧 Correções/Melhorias Sugeridas
+          - Para cada problema, descreva:
+            - **O que:** problema específico
+            - **Como corrigir:** passo a passo técnico
+            - **Prioridade:** alta/média/baixa
+            - **Espec referenciada:** se aplica a algum REQ/AC do roadmap
+          - Sugira as próximas 2-3 PRs do roadmap que deveriam ser implementadas
+
+          ## 🏷️ Labels Sugeridas
+          - Liste 1-3 labels que descrevem o tema central do relatório (ex: memory, ci, governance, security, bug, enhancement)
+
+          ## 📋 Spec Checklist
+          - Liste os requisitos do roadmap que estão em risco (deadline, dependências)
+          - Liste os requisitos que progrediram
+
+          Dados do repositório:
+          PROMPT_EOF
+          )
+
+          # Append collected data to the prompt
+          CONTEXT=""
+
+          CONTEXT+="### PRs Mergeadas (últimas 24h)
+          $MERGED_PRS
+
+          ### PRs Draft Abertas
+          $OPEN_DRAFTS
+
+          ### PRs Ready Abertas
+          $OPEN_READY
+
+          ### Checks CI Falhando
+          $FAILED_CHECKS
+
+          ### Commits Recentes
+          $COMMITS
+
+          ### Issues Abertas
+          $OPEN_ISSUES
+
+          ### Releases Recentes
+          $LATEST_RELEASE
+
+          ### Data do Relatório
+          $REPORT_DATE
+
+          ### Roadmap de Referência
+          O repositório segue um roadmap em docs/roadmap/hermes-buzz-delivery-roadmap.md com 46 PRs planejadas (PR-001 a PR-046).
+          Cada PR tem REQ-XXX-NNN (requisitos) e AC-XXX-NNN (critérios de aceitação).
+          As PRs implementadas passam por verify-feature.sh que valida spec ↔ test ↔ evidence.
+          "
+
+          # Call Xiaomi MiMo API (v2.5)
+          RESPONSE=$(curl -sS --max-time 120 \
+            -X POST \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer $XIAOMI_MIMO_API_KEY" \
+            -d "$(jq -n --arg prompt "$PROMPT$CONTEXT" \
+              '{
+                model: "mimo-v2.5",
+                messages: [
+                  {role: "system", content: "Você é um engenheiro de desenvolvimento sênior que gera relatórios técnico-gerenciais em português do Brasil. Seja conciso, específico e actionável. Evite generalidades — cite números de PR, nomes de arquivos e IDs de REQ/AC quando relevante."},
+                  {role: "user", content: $prompt}
+                ],
+                temperature: 0.3,
+                max_tokens: 4096
+              }')" \
+            "https://api.mimo.xiaomi.com/v1/chat/completions")
+
+          # Extract the report content
+          REPORT_CONTENT=$(echo "$RESPONSE" | jq -r '.choices[0].message.content // empty')
+
+          if [ -z "$REPORT_CONTENT" ]; then
+            echo "::error::MiMo API returned empty response"
+            echo "::warning::API response: $RESPONSE"
+            echo "$RESPONSE" > mimo_error.json
+            exit 1
+          fi
+
+          # Extract suggested labels from the report
+          LABELS=$(echo "$REPORT_CONTENT" | sed -n '/## 🏷️ Labels Sugeridas/,/## /p' | tail -n +2 | head -10 | grep -oE '\b[a-z-]+\b' | head -3 | sort -u | tr '\n' ',' | sed 's/,$//')
+
+          # Save to outputs
+          echo "report<<REPORT_EOF" >> "$GITHUB_OUTPUT"
+          echo "$REPORT_CONTENT" >> "$GITHUB_OUTPUT"
+          echo "REPORT_EOF" >> "$GITHUB_OUTPUT"
+
+          echo "labels=$LABELS" >> "$GITHUB_OUTPUT"
+
+          # Also save to file for debugging
+          echo "$REPORT_CONTENT" > mimo_report.md
+
+      - name: Find related open issue (same theme)
+        id: related
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          # Extract the primary theme from the report (first label or section heading)
+          THEME=$(echo "${{ steps.mimo.outputs.labels }}" | cut -d, -f1)
+
+          if [ -z "$THEME" ]; then
+            echo "related_issue=" >> "$GITHUB_OUTPUT"
+            echo "theme=general" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "theme=$THEME" >> "$GITHUB_OUTPUT"
+
+          # Search open issues with the same label, created in the last 7 days
+          RELATED=$(gh issue list --state open --label "$THEME" --limit 5 \
+            --json number,createdAt,title \
+            --jq '.[] | select(.createdAt >= "'$(date -u -d '7 days ago' +%Y-%m-%d)'T00:00:00Z") | .number' \
+            | tail -1)  # latest matching issue
+
+          if [ -n "$RELATED" ] && [ "${{ github.event.inputs.force_new_issue }}" != "true" ]; then
+            echo "related_issue=$RELATED" >> "$GITHUB_OUTPUT"
+            echo "Found related issue #$RELATED with label '$THEME'"
+          else
+            echo "related_issue=" >> "$GITHUB_OUTPUT"
+            echo "No related issue found — will create new one"
+          fi
+
+      - name: Publish report (new issue or comment)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPORT: ${{ steps.mimo.outputs.report }}
+          LABELS: ${{ steps.mimo.outputs.labels }}
+          RELATED_ISSUE: ${{ steps.related.outputs.related_issue }}
+          THEME: ${{ steps.related.outputs.theme }}
+        run: |
+          set -euo pipefail
+
+          # Ensure all suggested labels exist
+          IFS=',' read -ra LABEL_ARRAY <<< "$LABELS"
+          for label in "${LABEL_ARRAY[@]}"; do
+            label=$(echo "$label" | xargs)  # trim
+            if [ -n "$label" ]; then
+              gh label create "$label" --color "5319e7" --force 2>/dev/null || true
+            fi
+          done
+
+          # Add standard labels
+          LABELS_WITH_STANDARD="$LABELS,mimo-report,daily"
+          # Ensure mimo-report label exists
+          gh label create "mimo-report" --color "0e8a16" --force 2>/dev/null || true
+          gh label create "daily" --color "fbca04" --force 2>/dev/null || true
+
+          if [ -n "$RELATED_ISSUE" ]; then
+            # Comment on existing issue (same theme — continue thread)
+            gh issue comment "$RELATED_ISSUE" --body "## 📅 Atualização $REPORT_DATE
+
+          $REPORT
+
+          ---
+          _Relatório gerado automaticamente por MiMo v2.5 — mesma temática da issue original ($THEME)_
+          "
+
+            echo "Commented on issue #$RELATED_ISSUE"
+
+          else
+            # Create new issue
+            TITLE="📊 Relatório Diário — $REPORT_DATE ($THEME)"
+
+            gh issue create \
+              --title "$TITLE" \
+              --label "$LABELS_WITH_STANDARD" \
+              --body "$REPORT
+
+          ---
+          _Relatório gerado automaticamente por [MiMo v2.5](https://api.mimo.xiaomi.com) via workflow GitHub Actions._"
+
+            echo "Created new issue"
+          fi
+
+      - name: Apply labels to open PRs (auto-label)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          # Auto-label open PRs based on branch name pattern
+          # roadmap/pr-NNN-* → label based on phase
+          gh pr list --state open --limit 50 --json number,headRefName --jq '.[] | "\(.number) \(.headRefName)"' | while read num branch; do
+            PHASE=""
+            case "$branch" in
+              roadmap/pr-00[1-8]*|feature/pr-00[1-8]*) PHASE="memory" ;;
+              roadmap/pr-009-*|roadmap/pr-01[0-4]*) PHASE="providers" ;;
+              roadmap/pr-01[5-8]*) PHASE="context-compression" ;;
+              roadmap/pr-01[9-2]*) PHASE="skills" ;;
+              roadmap/pr-02[3-7]*) PHASE="mcp" ;;
+              roadmap/pr-02[8-2]*) PHASE="plugins" ;;
+              roadmap/pr-03[3-6]*) PHASE="observability" ;;
+              roadmap/pr-03[7-1]*) PHASE="self-improvement" ;;
+              roadmap/pr-04[2-4]*) PHASE="credentials" ;;
+              roadmap/pr-045-*|roadmap/pr-046*) PHASE="release" ;;
+              *) PHASE="roadmap" ;;
+            esac
+
+            if [ -n "$PHASE" ]; then
+              gh label create "$PHASE" --color "1d76db" --force 2>/dev/null || true
+              gh label create "roadmap" --color "cccccc" --force 2>/dev/null || true
+              gh pr edit "$num" --add-label "$PHASE,roadmap" 2>/dev/null || true
+            fi
+          done
+
+      - name: Upload report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mimo-report-${{ env.REPORT_DATE }}
+          path: mimo_report.md
+          retention-days: 30
