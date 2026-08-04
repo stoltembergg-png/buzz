@@ -1,4 +1,4 @@
-name: MiMo Periodic Report
+name: Periodic Report
 
 on:
   schedule:
@@ -106,7 +106,7 @@ jobs:
             echo "RELEASE_EOF"
           } >> "$GITHUB_ENV"
 
-      - name: Generate report via Xiaomi MiMo v2.5
+      - name: Generate report
         id: mimo
         env:
           XIAOMI_MIMO_API_KEY: ${{ secrets.XIAOMI_MIMO_API_KEY }}
@@ -116,33 +116,33 @@ jobs:
 
           # Build the context prompt
           PROMPT=$(cat <<'PROMPT_EOF'
-          Você é um engenheiro de desenvolvimento sênior analisando o estado diário de um repositório GitHub (fork do Buzz/Hermes).
+          Você é um engenheiro de desenvolvimento sênior analisando o estado periódico de um repositório GitHub (fork do Buzz/Hermes).
           Gere um relatório estruturado em markdown com as seguintes seções:
 
-          ## 📊 Resumo do Dia
+          ## Resumo
           - O que foi feito (PRs mergeadas, commits)
           - Estado geral do repositório
 
-          ## ✅ Pontos Fortes
+          ## Pontos Fortes
           - O que foi bem executado
 
-          ## ⚠️ Problemas Detectados
+          ## Problemas Detectados
           - Checks CI falhando
           - PRs abertas sem checks
           - Anomalias nos testes
 
-          ## 🔧 Correções/Melhorias Sugeridas
+          ## Correcoes e Melhorias Sugeridas
           - Para cada problema, descreva:
-            - **O que:** problema específico
-            - **Como corrigir:** passo a passo técnico
-            - **Prioridade:** alta/média/baixa
-            - **Espec referenciada:** se aplica a algum REQ/AC do roadmap
+            - O que: problema específico
+            - Como corrigir: passo a passo técnico
+            - Prioridade: alta/média/baixa
+            - Espec referenciada: se aplica a algum REQ/AC do roadmap
           - Sugira as próximas 2-3 PRs do roadmap que deveriam ser implementadas
 
-          ## 🏷️ Labels Sugeridas
+          ## Labels Sugeridas
           - Liste 1-3 labels que descrevem o tema central do relatório (ex: memory, ci, governance, security, bug, enhancement)
 
-          ## 📋 Spec Checklist
+          ## Spec Checklist
           - Liste os requisitos do roadmap que estão em risco (deadline, dependências)
           - Liste os requisitos que progrediram
 
@@ -221,7 +221,7 @@ jobs:
           fi
 
           # Extract suggested labels from the report
-          LABELS=$(echo "$REPORT_CONTENT" | sed -n '/## 🏷️ Labels Sugeridas/,/## /p' | tail -n +2 | head -10 | grep -oE '\b[a-z-]+\b' | head -3 | sort -u | tr '\n' ',' | sed 's/,$//')
+          LABELS=$(echo "$REPORT_CONTENT" | sed -n '/## Labels Sugeridas/,/## /p' | tail -n +2 | head -10 | grep -oE '\b[a-z-]+\b' | head -3 | sort -u | tr '\n' ',' | sed 's/,$//')
 
           # Save to outputs
           echo "report<<REPORT_EOF" >> "$GITHUB_OUTPUT"
@@ -285,26 +285,26 @@ jobs:
           done
 
           # Add standard labels
-          LABELS_WITH_STANDARD="$LABELS,mimo-report,daily"
-          # Ensure mimo-report label exists
-          gh label create "mimo-report" --color "0e8a16" --force 2>/dev/null || true
-          gh label create "daily" --color "fbca04" --force 2>/dev/null || true
+          LABELS_WITH_STANDARD="$LABELS,report,periodic"
+          # Ensure report label exists
+          gh label create "report" --color "0e8a16" --force 2>/dev/null || true
+          gh label create "periodic" --color "fbca04" --force 2>/dev/null || true
 
           if [ -n "$RELATED_ISSUE" ]; then
             # Comment on existing issue (same theme — continue thread)
-            gh issue comment "$RELATED_ISSUE" --body "## 📅 Atualização $REPORT_DATE
+            gh issue comment "$RELATED_ISSUE" --body "Atualização $REPORT_DATE
 
           $REPORT
 
           ---
-          _Relatório gerado automaticamente por MiMo v2.5 — mesma temática da issue original ($THEME)_
+          _Atualização do relatório periódico — mesma temática da issue original ($THEME)_
           "
 
             echo "Commented on issue #$RELATED_ISSUE"
 
           else
-            # Create new issue
-            TITLE="📊 Relatório Diário — $REPORT_DATE ($THEME)"
+            # Create new issue — title is just "Report - YYYY-MM-DD"
+            TITLE="Report - $REPORT_DATE"
 
             gh issue create \
               --title "$TITLE" \
@@ -312,7 +312,7 @@ jobs:
               --body "$REPORT
 
           ---
-          _Relatório gerado automaticamente por [MiMo v2.5](https://api.mimo.xiaomi.com) via workflow GitHub Actions._"
+          _Relatório gerado automaticamente via workflow GitHub Actions._"
 
             echo "Created new issue"
           fi
