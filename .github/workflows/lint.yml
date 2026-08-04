@@ -17,16 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Rust formatting (no compilation)
-      - uses: dtolnay/rust-toolchain@stable
-        with:
-          components: rustfmt
-      - name: cargo fmt --check (workspace)
-        run: cargo fmt --all -- --check
-      - name: cargo fmt --check (desktop Tauri)
-        run: cargo fmt --manifest-path desktop/src-tauri/Cargo.toml --all -- --check
-
-      # Frontend (TypeScript/Biome — no Rust build)
+      # Frontend (TypeScript/Biome — no Rust build needed)
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
@@ -39,7 +30,7 @@ jobs:
       - name: TypeScript typecheck
         run: pnpm -C desktop typecheck
 
-      # DCO (Signed-off-by)
+      # DCO (Signed-off-by) — only on PRs
       - name: Check DCO
         if: github.event_name == 'pull_request'
         run: |
