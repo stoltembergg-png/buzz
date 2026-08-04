@@ -34,6 +34,7 @@ mod shutdown;
 mod templates;
 #[cfg(target_os = "macos")]
 mod tray_menu;
+mod hermes_home_inject;
 mod memory_scope;
 mod profile_bootstrap;
 mod runtime_scope;

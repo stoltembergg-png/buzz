@@ -1,0 +1,13 @@
+{
+  "feature": "pr-007-inject-hermes-home",
+  "timestamp": "2026-08-04T06:44:22Z",
+  "gitRev": "87cb5f08",
+  "platform": { "os": "MINGW64_NT-10.0-26100", "arch": "x86_64" },
+  "tools": { "node": "v26.5.1" },
+  "command": "node --test /c/Users/Gabriel/Desktop/buzz-png/.spec/features/pr-007-inject-hermes-home/contract.test.mjs",
+  "exitCode": 0,
+  "specACs": ["AC-MEM-701","AC-MEM-702","AC-MEM-703","AC-MEM-704","AC-MEM-705","AC-MEM-706","AC-MEM-707"],
+  "testACs": ["AC-MEM-701","AC-MEM-702","AC-MEM-703","AC-MEM-704","AC-MEM-705","AC-MEM-706","AC-MEM-707"],
+  "passedACs": [],
+  "results": { "totalSpecACs": 7, "totalTestACs": 7 }
+}
