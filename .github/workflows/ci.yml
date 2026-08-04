@@ -1,0 +1,190 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+  # Use the CI profile defined in Cargo.toml — opt-level 1 for workspace crates,
+  # full opt-level 3 for dependencies. Roughly half the codegen cost of release.
+  CARGO_PROFILE_CI_LTO: "false"
+
+jobs:
+  # ─── Rust workspace ──────────────────────────────────────────────────────
+  rust-fmt:
+    name: Rust fmt
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+      - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: fmt
+      - name: cargo fmt --check
+        run: cargo fmt --all -- --check
+
+  rust-clippy:
+    name: Rust clippy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+      - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: clippy
+      - name: Install sidecar stubs
+        run: |
+          TARGET=$(rustc -vV | sed -n 's|host: ||p')
+          mkdir -p desktop/src-tauri/binaries
+          for bin in buzz-acp buzz-agent buzz-dev-mcp git-credential-nostr buzz; do
+            touch "desktop/src-tauri/binaries/${bin}-${TARGET}"
+          done
+      - name: clippy (workspace)
+        run: cargo clippy --workspace --all-targets -- -D warnings
+      - name: clippy (desktop Tauri)
+        run: cargo clippy --manifest-path desktop/src-tauri/Cargo.toml --all-targets -- -D warnings
+
+  rust-test:
+    name: Rust unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: test
+      - name: Install sidecar stubs
+        run: |
+          TARGET=$(rustc -vV | sed -n 's|host: ||p')
+          mkdir -p desktop/src-tauri/binaries
+          for bin in buzz-acp buzz-agent buzz-dev-mcp git-credential-nostr buzz; do
+            touch "desktop/src-tauri/binaries/${bin}-${TARGET}"
+          done
+      - name: Install nextest
+        run: cargo install cargo-nextest --locked || true
+      - name: Unit tests (infra-free)
+        run: |
+          cargo nextest run -p buzz-core -p buzz-auth --lib
+          cargo nextest run -p buzz-voice --lib
+          cargo nextest run -p buzz-cli
+          cargo nextest run -p buzz-db --lib
+          cargo nextest run -p buzz-conformance
+          cargo nextest run -p buzz-push-gateway
+      - name: Desktop Tauri tests
+        run: cd desktop/src-tauri && cargo test
+
+  # ─── Desktop frontend (TypeScript / React) ──────────────────────────────
+  desktop-check:
+    name: Desktop lint + typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
+      - name: biome check
+        run: pnpm -C desktop exec biome check .
+      - name: TypeScript typecheck
+        run: pnpm -C desktop typecheck
+
+  desktop-test:
+    name: Desktop unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
+      - name: pnpm test
+        run: pnpm -C desktop test
+
+  desktop-build:
+    name: Desktop frontend build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
+      - name: pnpm build
+        run: pnpm -C desktop build
+
+  # ─── Tauri Rust (desktop/src-tauri) ──────────────────────────────────────
+  tauri-check:
+    name: Tauri Rust check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: tauri-check
+      - name: Install sidecar stubs
+        run: |
+          TARGET=$(rustc -vV | sed -n 's|host: ||p')
+          mkdir -p desktop/src-tauri/binaries
+          for bin in buzz-acp buzz-agent buzz-dev-mcp git-credential-nostr buzz; do
+            touch "desktop/src-tauri/binaries/${bin}-${TARGET}"
+          done
+      - name: cargo check (Tauri)
+        run: cargo check --manifest-path desktop/src-tauri/Cargo.toml
+      - name: cargo fmt --check (Tauri)
+        run: cargo fmt --manifest-path desktop/src-tauri/Cargo.toml --all -- --check
+
+  # ─── Mobile (Flutter) ───────────────────────────────────────────────────
+  mobile-check:
+    name: Mobile Flutter analyze + test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - name: Flutter version
+        run: flutter --version
+      - name: Flutter pub get
+        run: cd mobile && flutter pub get
+      - name: Flutter analyze
+        run: cd mobile && flutter analyze
+      - name: Flutter test
+        run: cd mobile && flutter test
+
+  # ─── Dockerfile build ────────────────────────────────────────────────────
+  docker-build:
+    name: Docker relay image build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Dockerfile
+        run: docker build -f Dockerfile -t buzz-relay:ci .
