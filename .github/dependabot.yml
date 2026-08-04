@@ -1,11 +1,50 @@
-# To get started with Dependabot version updates, you'll need to specify which
-# package ecosystems to update and where the package manifests are located.
-# Please see the documentation for all configuration options:
-# https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
- 
 version: 2
 updates:
-  - package-ecosystem: "" # See documentation for possible values
-    directory: "/" # Location of package manifests
+  # GitHub Actions — update action versions weekly
+  - package-ecosystem: "github-actions"
+    directory: "/"
     schedule:
       interval: "weekly"
+    labels: ["ci", "dependencies"]
+    commit-message:
+      prefix: "ci"
+
+  # Rust (Cargo) — workspace root
+  - package-ecosystem: "cargo"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels: ["dependencies", "rust"]
+    commit-message:
+      prefix: "deps"
+    open-pull-requests-limit: 5
+    reviewers: []
+
+  # npm/pnpm — desktop frontend
+  - package-ecosystem: "npm"
+    directory: "/desktop"
+    schedule:
+      interval: "weekly"
+    labels: ["dependencies", "desktop"]
+    commit-message:
+      prefix: "deps"
+    open-pull-requests-limit: 5
+
+  # npm/pnpm — workspace root
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels: ["dependencies"]
+    commit-message:
+      prefix: "deps"
+    open-pull-requests-limit: 3
+
+  # Docker — Dockerfiles
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels: ["dependencies", "docker"]
+    commit-message:
+      prefix: "deps"

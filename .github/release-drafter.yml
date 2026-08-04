@@ -1,0 +1,51 @@
+# Configuration for release-drafter/release-drafter@v6
+# Auto-generates release notes from merged PRs.
+
+name-template: "v$RESOLVED_VERSION"
+tag-template: "v$RESOLVED_VERSION"
+
+categories:
+  - title: "🚀 Features"
+    labels: ["enhancement", "feature"]
+  - title: "🐛 Bug Fixes"
+    labels: ["bug", "fix"]
+  - title: "🔒 Security"
+    labels: ["security"]
+  - title: "📦 Dependencies"
+    labels: ["dependencies"]
+  - title: "📝 Documentation"
+    labels: ["documentation", "docs"]
+  - title: "🔧 Maintenance"
+    labels: ["chore", "refactor", "ci"]
+
+change-template: "- $TITLE @$AUTHOR (#$NUMBER)"
+change-title-escapes: '\<*_&'
+
+version-resolver:
+  major:
+    labels: ["breaking"]
+  minor:
+    labels: ["enhancement", "feature"]
+  patch:
+    labels: ["bug", "fix", "dependencies", "chore"]
+  default: patch
+
+autolabeler:
+  - label: "documentation"
+    title:
+      - "/^docs/i"
+  - label: "bug"
+    title:
+      - "/^fix/i"
+  - label: "enhancement"
+    title:
+      - "/^feat/i"
+  - label: "chore"
+    title:
+      - "/^chore/i"
+  - label: "ci"
+    title:
+      - "/^ci/i"
+  - label: "dependencies"
+    title:
+      - "/^deps/i"
