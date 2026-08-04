@@ -1,0 +1,13 @@
+{
+  "feature": "pr-008-memory-persistence-harness",
+  "timestamp": "2026-08-04T06:54:35Z",
+  "gitRev": "b0e96cdd",
+  "platform": { "os": "MINGW64_NT-10.0-26100", "arch": "x86_64" },
+  "tools": { "node": "v26.5.1" },
+  "command": "node --test /c/Users/Gabriel/Desktop/buzz-png/.spec/features/pr-008-memory-persistence-harness/contract.test.mjs",
+  "exitCode": 0,
+  "specACs": ["AC-MEM-801","AC-MEM-802","AC-MEM-803","AC-MEM-804","AC-MEM-805","AC-MEM-806","AC-MEM-807"],
+  "testACs": ["AC-MEM-801","AC-MEM-802","AC-MEM-803","AC-MEM-804","AC-MEM-805","AC-MEM-806","AC-MEM-807"],
+  "passedACs": [],
+  "results": { "totalSpecACs": 7, "totalTestACs": 7 }
+}
