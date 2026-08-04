@@ -1,9 +1,11 @@
-name: MiMo Daily Report
+name: MiMo Periodic Report
 
 on:
   schedule:
-    # 09:00 UTC daily = 06:00 BRT
-    - cron: '0 9 * * *'
+    # A cada 5 dias, 09:00 UTC (06:00 BRT)
+    # GitHub cron não suporta "every 5 days" nativo — esta pattern
+    # dispara nos dias 1, 6, 11, 16, 21, 26, 31 de cada mês (~5 em 5 dias).
+    - cron: '0 9 1,6,11,16,21,26,31 * *'
   workflow_dispatch:
     inputs:
       force_new_issue:
