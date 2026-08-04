@@ -38,6 +38,7 @@ mod hermes_home_inject;
 mod memory_scope;
 mod persistence_harness;
 mod profile_bootstrap;
+mod provider_contract;
 mod runtime_scope;
 mod util;
 #[cfg(target_os = "linux")]
