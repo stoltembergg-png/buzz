@@ -1,0 +1,61 @@
+name: Lint & Format
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: lint-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    name: Lint & format checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Rust formatting (no compilation)
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+      - name: cargo fmt --check (workspace)
+        run: cargo fmt --all -- --check
+      - name: cargo fmt --check (desktop Tauri)
+        run: cargo fmt --manifest-path desktop/src-tauri/Cargo.toml --all -- --check
+
+      # Frontend (TypeScript/Biome — no Rust build)
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
+      - name: biome check
+        run: pnpm -C desktop exec biome check .
+      - name: TypeScript typecheck
+        run: pnpm -C desktop typecheck
+
+      # DCO (Signed-off-by)
+      - name: Check DCO
+        if: github.event_name == 'pull_request'
+        run: |
+          COMMITS=$(gh pr view ${{ github.event.pull_request.number }} --json commits --jq '.commits[] | .oid' 2>/dev/null || echo "")
+          if [ -z "$COMMITS" ]; then
+            echo "Could not fetch PR commits, skipping DCO check"
+            exit 0
+          fi
+          FAILED=0
+          for sha in $COMMITS; do
+            BODY=$(gh api repos/${{ github.repository }}/commits/$sha --jq '.commit.message')
+            if ! echo "$BODY" | grep -q "Signed-off-by:"; then
+              echo "Missing DCO in commit $sha"
+              FAILED=1
+            fi
+          done
+          exit $FAILED
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
