@@ -10,12 +10,29 @@ permissions:
 jobs:
   cleanup:
     runs-on: ubuntu-latest
-    if: github.event.pull_request.merged == true && startsWith(github.event.pull_request.head.ref, 'roadmap/') == false
+    if: github.event.pull_request.merged == true
     steps:
-      - name: Delete merged branch
-        run: |
-          gh api \
-            -X DELETE \
-            repos/${{ github.repository }}/git/refs/heads/${{ github.event.pull_request.head.ref }}
+      - name: Delete merged branch (skip if already deleted or protected)
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: ${{ github.event.pull_request.head.ref }}
+        run: |
+          # Skip if branch starts with 'roadmap/' or 'feature/hermes-*' (kept by policy)
+          case "$BRANCH" in
+            roadmap/*|feature/hermes-*)
+              echo "Keeping branch '$BRANCH' (policy)."
+              exit 0
+              ;;
+          esac
+
+          # Check if branch still exists before attempting delete.
+          if gh api "repos/${{ github.repository }}/git/refs/heads/$BRANCH" \
+               --silent --output /dev/null; then
+            gh api \
+              -X DELETE \
+              "repos/${{ github.repository }}/git/refs/heads/$BRANCH"
+            echo "Deleted branch '$BRANCH'."
+          else
+            echo "Branch '$BRANCH' already deleted — skipping."
+            exit 0
+          fi
