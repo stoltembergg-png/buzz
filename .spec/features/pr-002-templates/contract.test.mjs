@@ -28,26 +28,26 @@ function extractCheckedItems() {
 }
 
 describe("PR-002 governance contract", () => {
-  it("RS-001 declares Status, Phase, Depends on", () => {
+  it("@spec:AC-GOV-201 RS-001 declares Status, Phase, Depends on", () => {
     const text = readSpec();
     assert.match(text, /^\*\*Status:\*\* done$/m);
     assert.match(text, /^\*\*Phase:\*\* governance$/m);
     assert.match(text, /^\*\*Depends on:\*\* PR-001$/m);
   });
 
-  it("RS-002 exposes REQ-XXX-NNN identifiers", () => {
+  it("@spec:AC-GOV-202 RS-002 exposes REQ-XXX-NNN identifiers", () => {
     const ids = extractIds("REQ-");
     assert.deepEqual(ids, ["REQ-GOV-201", "REQ-GOV-202", "REQ-GOV-203", "REQ-GOV-204"],
       `unexpected REQ ids: ${ids.join(", ")}`);
   });
 
-  it("RS-003 exposes AC-XXX-NNN identifiers", () => {
+  it("@spec:AC-GOV-202 RS-003 exposes AC-XXX-NNN identifiers", () => {
     const ids = extractIds("AC-");
     assert.deepEqual(ids, ["AC-GOV-201", "AC-GOV-202", "AC-GOV-203"],
       `unexpected AC ids: ${ids.join(", ")}`);
   });
 
-  it("RS-004 contains no unchecked placeholders in checked items", () => {
+  it("@spec:AC-GOV-201 RS-004 contains no unchecked placeholders in checked items", () => {
     const checked = extractCheckedItems();
     for (const line of checked) {
       assert.doesNotMatch(line, PLACEHOLDERS,
@@ -55,7 +55,7 @@ describe("PR-002 governance contract", () => {
     }
   });
 
-  it("RS-005 has unique identifiers across REQ and AC sections", () => {
+  it("@spec:AC-GOV-202 RS-005 has unique identifiers across REQ and AC sections", () => {
     const seen = new Set();
     for (const id of extractIds("REQ-")) {
       assert.ok(!seen.has(id), `duplicate id: ${id}`);
@@ -67,18 +67,18 @@ describe("PR-002 governance contract", () => {
     }
   });
 
-  it("RS-006 references evidence in the Evidence section", () => {
+  it("@spec:AC-GOV-203 RS-006 references evidence in the Evidence section", () => {
     const text = readSpec();
     assert.match(text, /^\s*-\s*\[\s*\]\s*`E-/m,
       "evidence section must contain at least one E-XXX-NNN reference");
   });
 
-  it("RS-007 differentiation between automated tests and manual verification", () => {
+  it("@spec:AC-GOV-203 RS-007 differentiation between automated tests and manual verification", () => {
     const text = readSpec();
     assert.match(text, /Tests\b[\s\S]*`T-GOV-/m);
   });
 
-  it("RS-008 all contract.test.mjs fields map to the PR-002 requirements", () => {
+  it("@spec:AC-GOV-201 RS-008 all contract.test.mjs fields map to the PR-002 requirements", () => {
     const reqs = extractIds("REQ-");
     const text = readSpec();
     assert.ok(reqs.length > 0, "no REQ ids");
