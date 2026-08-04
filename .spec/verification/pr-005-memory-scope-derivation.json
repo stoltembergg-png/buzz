@@ -1,0 +1,13 @@
+{
+  "feature": "pr-005-memory-scope-derivation",
+  "timestamp": "2026-08-04T06:29:17Z",
+  "gitRev": "b3634d3c",
+  "platform": { "os": "MINGW64_NT-10.0-26100", "arch": "x86_64" },
+  "tools": { "node": "v26.5.1" },
+  "command": "node --test /c/Users/Gabriel/Desktop/buzz-png/.spec/features/pr-005-memory-scope-derivation/contract.test.mjs",
+  "exitCode": 0,
+  "specACs": ["AC-MEM-501","AC-MEM-502","AC-MEM-503","AC-MEM-504","AC-MEM-505","AC-MEM-506","AC-MEM-507","AC-MEM-508"],
+  "testACs": ["AC-MEM-501","AC-MEM-502","AC-MEM-503","AC-MEM-504","AC-MEM-505","AC-MEM-506","AC-MEM-507","AC-MEM-508"],
+  "passedACs": [],
+  "results": { "totalSpecACs": 8, "totalTestACs": 8 }
+}
