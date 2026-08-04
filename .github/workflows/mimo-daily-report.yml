@@ -182,7 +182,10 @@ jobs:
           "
 
           # Call Xiaomi MiMo API (v2.5)
-          RESPONSE=$(curl -sS --max-time 120 \
+          # MiMo is a reasoning model: it producess reasoning_content BEFORE content.
+          # Need high max_tokens (8192) so reasoning finishes and content is non-empty.
+          # Correct endpoint: https://api.xiaomimimo.com/v1/chat/completions
+          RESPONSE=$(curl -sS --max-time 180 \
             -X POST \
             -H "Content-Type: application/json" \
             -H "Authorization: Bearer $XIAOMI_MIMO_API_KEY" \
@@ -190,22 +193,29 @@ jobs:
               '{
                 model: "mimo-v2.5",
                 messages: [
-                  {role: "system", content: "Você é um engenheiro de desenvolvimento sênior que gera relatórios técnico-gerenciais em português do Brasil. Seja conciso, específico e actionável. Evite generalidades — cite números de PR, nomes de arquivos e IDs de REQ/AC quando relevante."},
+                  {role: "system", content: "Você é um engenheiro de desenvolvimento sênior que gera relatórios técnico-gerenciais em português do Brasil. Seja conciso, específico e actionável. Evite generalidades — cite números de PR, nomes de arquivos e IDs de REQ/AC quando relevante. Pulle o raciocínio curto e foque na resposta final."},
                   {role: "user", content: $prompt}
                 ],
                 temperature: 0.3,
-                max_tokens: 4096
+                max_tokens: 8192
               }')" \
-            "https://api.mimo.xiaomi.com/v1/chat/completions")
+            "https://api.xiaomimimo.com/v1/chat/completions")
 
-          # Extract the report content
+          # Extract the report content (MiMo puts final answer in .content, reasoning in .reasoning_content)
           REPORT_CONTENT=$(echo "$RESPONSE" | jq -r '.choices[0].message.content // empty')
 
-          if [ -z "$REPORT_CONTENT" ]; then
-            echo "::error::MiMo API returned empty response"
-            echo "::warning::API response: $RESPONSE"
+          if [ -z "$REPORT_CONTENT" ] || [ "$REPORT_CONTENT" = "null" ]; then
+            echo "::error::MiMo API returned empty content. The reasoning model may have exhausted the token budget before producing final answer."
+            # Save full response for debugging (reasoning_content shows what happened)
             echo "$RESPONSE" > mimo_error.json
-            exit 1
+            # Try to salvage reasoning_content as fallback report
+            REASONING=$(echo "$RESPONSE" | jq -r '.choices[0].message.reasoning_content // empty')
+            if [ -n "$REASONING" ]; then
+              echo "::warning::Content was empty but reasoning_content has $${#REASONING} chars. Using as fallback."
+              REPORT_CONTENT="> ⚠️ Relatório gerado a partir do reasoning_content (max_tokens insuficiente para content completo).\n\n$REASONING"
+            else
+              exit 1
+            fi
           fi
 
           # Extract suggested labels from the report
