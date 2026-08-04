@@ -1,0 +1,13 @@
+{
+  "feature": "pr-003-feature-verifier",
+  "timestamp": "2026-08-04T05:19:08Z",
+  "gitRev": "0605bb80",
+  "platform": { "os": "MINGW64_NT-10.0-26100", "arch": "x86_64" },
+  "tools": { "node": "v26.5.1" },
+  "command": "node --test /c/Users/Gabriel/Desktop/buzz-png/.spec/features/pr-003-feature-verifier/contract.test.mjs",
+  "exitCode": 0,
+  "specACs": ["AC-GOV-301","AC-GOV-302","AC-GOV-303","AC-GOV-304","AC-GOV-305","AC-GOV-306","AC-GOV-307"],
+  "testACs": ["AC-GOV-301","AC-GOV-302","AC-GOV-303","AC-GOV-304","AC-GOV-305","AC-GOV-306","AC-GOV-307"],
+  "passedACs": [],
+  "results": { "totalSpecACs": 7, "totalTestACs": 7 }
+}
