@@ -36,43 +36,43 @@ jobs:
           TODAY=$(date -u +%Y-%m-%d)
           YESTERDAY=$(date -u -d 'yesterday' +%Y-%m-%d)
 
-          # Merged PRs in the last 24h
+          # Merged PRs in the last 24h (|| true to tolerate empty results)
           MERGED=$(gh pr list --state merged --limit 50 \
             --json number,title,mergedAt,labels,headRefName \
-            --jq '.[] | select(.mergedAt >= "'$YESTERDAY'T00:00:00Z") | "- #\(.number) \(.title) [\(.headRefName)]"')
+            --jq '.[] | select(.mergedAt >= "'$YESTERDAY'T00:00:00Z") | "- #\(.number) \(.title) [\(.headRefName)]"' || true)
           MERGED="${MERGED:-_None_}"
 
           # Open draft PRs (roadmap)
           OPEN_DRAFTS=$(gh pr list --state open --draft --limit 50 \
             --json number,title,headRefName \
-            --jq '.[] | "- #\(.number) \(.title) [\(.headRefName)]"')
+            --jq '.[] | "- #\(.number) \(.title) [\(.headRefName)]"' || true)
           OPEN_DRAFTS="${OPEN_DRAFTS:-_None_}"
 
-          # Open PRs ready for review
-          OPEN_READY=$(gh pr list --state open --no-draft --limit 20 \
+          # Open PRs ready for review (non-draft: filter via --search)
+          OPEN_READY=$(gh pr list --state open --search 'draft:false' --limit 20 \
             --json number,title,headRefName \
-            --jq '.[] | "- #\(.number) \(.title) [\(.headRefName)]"')
+            --jq '.[] | "- #\(.number) \(.title) [\(.headRefName)]"' || true)
           OPEN_READY="${OPEN_READY:-_None_}"
 
           # CI check results from the last 24h
           FAILED_CHECKS=$(gh run list --limit 30 --json databaseId,name,status,conclusion,createdAt \
-            --jq '.[] | select(.createdAt >= "'$YESTERDAY'T00:00:00Z" and .conclusion == "failure") | "- \(.name) (run \(.databaseId)): \(.conclusion)"')
+            --jq '.[] | select(.createdAt >= "'$YESTERDAY'T00:00:00Z" and .conclusion == "failure") | "- \(.name) (run \(.databaseId)): \(.conclusion)"' || true)
           FAILED_CHECKS="${FAILED_CHECKS:-_None_}"
 
-          # Commits in the last 24h
-          COMMITS=$(git log --since="$YESTERDAY 00:00:00" --until="$TODAY 23:59:59" --oneline --no-merges 2>/dev/null | head -30)
+          # Commits in the last 24h (|| true to tolerate empty days)
+          COMMITS=$(git log --since="$YESTERDAY 00:00:00" --until="$TODAY 23:59:59" --oneline --no-merges 2>/dev/null | head -30 || true)
           COMMITS="${COMMITS:-_None_}"
 
           # Recent issues
           OPEN_ISSUES=$(gh issue list --state open --limit 20 \
             --json number,title,labels \
-            --jq '.[] | "- #\(.number) \(.title) [\([.labels[].name] | join(", "))]"')
+            --jq '.[] | "- #\(.number) \(.title) [\([.labels[].name] | join(", "))]"' || true)
           OPEN_ISSUES="${OPEN_ISSUES:-_None_}"
 
           # Latest release
           LATEST_RELEASE=$(gh release list --limit 3 \
             --json tagName,name,isDraft,publishedAt \
-            --jq '.[] | "- \(.name) (\(.tagName)) draft=\(.isDraft) \(.publishedAt)"')
+            --jq '.[] | "- \(.name) (\(.tagName)) draft=\(.isDraft) \(.publishedAt)"' || true)
           LATEST_RELEASE="${LATEST_RELEASE:-_None_}"
 
           # Recent test/verify results
